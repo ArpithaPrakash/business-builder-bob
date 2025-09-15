@@ -14,48 +14,50 @@ All colors MUST be HSL. Bright, playful, Duolingo-inspired with construction ele
     --background: 210 100% 97%;
     --foreground: 220 25% 15%;
 
-    /* Construction Theme Colors */
-    --construction-yellow: 45 100% 55%;
-    --construction-orange: 25 100% 60%;
-    --blueprint-blue: 210 100% 65%;
-    --safety-orange: 15 100% 55%;
-    --hard-hat-yellow: 50 100% 50%;
+    /* Construction Theme Colors - Improved Palette */
+    --construction-yellow: 48 100% 67%;
+    --construction-orange: 24 95% 53%;
+    --blueprint-blue: 217 91% 60%;
+    --safety-orange: 16 85% 55%;
+    --hard-hat-yellow: 51 100% 50%;
     
     /* Semantic Colors */
-    --primary: 45 100% 55%; /* Construction Yellow */
-    --primary-foreground: 220 25% 15%;
+    --primary: 48 100% 67%; /* Brighter Construction Yellow */
+    --primary-foreground: 220 30% 8%;
     
-    --secondary: 210 100% 65%; /* Blueprint Blue */
+    --secondary: 217 91% 60%; /* Vibrant Blueprint Blue */
     --secondary-foreground: 0 0% 100%;
     
-    --accent: 25 100% 60%; /* Construction Orange */
+    --accent: 24 95% 53%; /* Rich Construction Orange */
     --accent-foreground: 0 0% 100%;
     
     --card: 0 0% 100%;
     --card-foreground: 220 25% 15%;
     
-    --muted: 210 40% 94%;
-    --muted-foreground: 220 15% 45%;
+    --muted: 220 15% 92%;
+    --muted-foreground: 220 20% 35%;
     
-    --border: 210 30% 85%;
-    --input: 210 30% 85%;
-    --ring: 45 100% 55%;
+    --border: 220 25% 82%;
+    --input: 220 25% 85%;
+    --ring: 48 100% 67%;
     
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
     
     /* Blueprint Grid Pattern */
-    --blueprint-grid: 210 50% 90%;
+    --blueprint-grid: 217 50% 85%;
     
-    /* Gradients */
+    /* Enhanced Gradients */
     --gradient-construction: linear-gradient(135deg, hsl(var(--construction-yellow)), hsl(var(--construction-orange)));
-    --gradient-blueprint: linear-gradient(180deg, hsl(var(--background)), hsl(var(--blueprint-grid)));
-    --gradient-hero: linear-gradient(135deg, hsl(var(--construction-yellow) / 0.1), hsl(var(--blueprint-blue) / 0.1));
+    --gradient-blueprint: linear-gradient(180deg, hsl(220 30% 97%), hsl(217 40% 92%));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--construction-yellow) / 0.15), hsl(var(--blueprint-blue) / 0.12));
+    --gradient-prompt: linear-gradient(135deg, hsl(var(--blueprint-blue)), hsl(var(--construction-yellow)));
     
     /* Shadows */
-    --shadow-construction: 0 10px 30px -5px hsl(var(--construction-yellow) / 0.3);
-    --shadow-blueprint: 0 5px 20px -5px hsl(var(--blueprint-blue) / 0.2);
-    --shadow-playful: 0 8px 25px -8px hsl(var(--construction-orange) / 0.4);
+    --shadow-construction: 0 12px 35px -8px hsl(var(--construction-yellow) / 0.4);
+    --shadow-blueprint: 0 8px 25px -6px hsl(var(--blueprint-blue) / 0.3);
+    --shadow-playful: 0 10px 30px -10px hsl(var(--construction-orange) / 0.5);
+    --shadow-prompt: 0 15px 40px -10px hsl(var(--blueprint-blue) / 0.6);
     
     --radius: 1rem;
 
@@ -122,12 +124,8 @@ All colors MUST be HSL. Bright, playful, Duolingo-inspired with construction ele
 
   body {
     @apply bg-background text-foreground font-nunito;
-    background-image: 
-      linear-gradient(hsl(var(--blueprint-blue) / 0.08) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--blueprint-blue) / 0.08) 1px, transparent 1px),
-      radial-gradient(circle at 25px 25px, hsl(var(--blueprint-blue) / 0.12) 1px, transparent 1px);
-    background-size: 25px 25px, 25px 25px, 50px 50px;
-    background-color: hsl(220 30% 96%);
+    background: var(--gradient-blueprint);
+    background-attachment: fixed;
   }
 }
 
@@ -146,7 +144,18 @@ All colors MUST be HSL. Bright, playful, Duolingo-inspired with construction ele
     background-size: 20px 20px;
   }
 
-  /* Construction-themed components */
+  /* Prompt-focused styles */
+  .prompt-container {
+    @apply relative p-8 rounded-3xl;
+    background: var(--gradient-prompt);
+    box-shadow: var(--shadow-prompt);
+    border: 3px solid hsl(var(--construction-yellow));
+  }
+  
+  .prompt-container::before {
+    content: '💡';
+    @apply absolute -top-4 left-8 text-4xl bg-card px-3 py-1 rounded-full border-3 border-construction-yellow;
+  }
   .construction-sign {
     @apply relative overflow-hidden rounded-2xl;
     background: var(--gradient-construction);
