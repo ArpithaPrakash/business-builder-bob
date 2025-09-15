@@ -127,42 +127,12 @@ export default {
             transform: "translateY(0)",
           },
         },
-        "bob-running": {
-          "0%": { 
-            transform: "translateX(-100px) scaleX(1)",
-            left: "0%"
-          },
-          "25%": { 
-            transform: "translateX(0px) scaleX(1)",
-            left: "25%"
-          },
-          "50%": { 
-            transform: "translateX(0px) scaleX(-1)",
-            left: "50%"
-          },
-          "75%": { 
-            transform: "translateX(0px) scaleX(-1)",
-            left: "75%"
-          },
-          "100%": { 
-            transform: "translateX(100px) scaleX(1)",
-            left: "100%"
-          }
-        },
         "typing-dots": {
           "0%, 60%, 100%": {
             transform: "translateY(0)",
           },
           "30%": {
             transform: "translateY(-10px)",
-          },
-        },
-        "bob-bounce": {
-          "0%, 100%": { 
-            transform: "translateY(0px) scale(1)",
-          },
-          "50%": { 
-            transform: "translateY(-15px) scale(1.1)",
           },
         },
       },
@@ -174,8 +144,6 @@ export default {
         "crane-lower": "crane-lower 3s ease-in-out infinite",
         "fade-in-up": "fade-in-up 0.5s ease-out",
         "typing-dots": "typing-dots 1.4s ease-in-out infinite",
-        "bob-running": "bob-running 8s ease-in-out infinite",
-        "bob-bounce": "bob-bounce 1s ease-in-out infinite",
       },
     },
   },
