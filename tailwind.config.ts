@@ -13,12 +13,25 @@ export default {
       },
     },
     extend: {
+      fontFamily: {
+        nunito: ['Nunito', 'sans-serif'],
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
         ring: "hsl(var(--ring))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        
+        // Construction theme colors
+        construction: {
+          yellow: "hsl(var(--construction-yellow))",
+          orange: "hsl(var(--construction-orange))",
+          blue: "hsl(var(--blueprint-blue))",
+          safety: "hsl(var(--safety-orange))",
+          hardhat: "hsl(var(--hard-hat-yellow))",
+        },
+        
         primary: {
           DEFAULT: "hsl(var(--primary))",
           foreground: "hsl(var(--primary-foreground))",
@@ -80,10 +93,57 @@ export default {
             height: "0",
           },
         },
+        "bounce-construction": {
+          "0%, 100%": { 
+            transform: "translateY(0) rotate(0deg)",
+          },
+          "50%": { 
+            transform: "translateY(-10px) rotate(-5deg)",
+          },
+        },
+        "hammer-swing": {
+          "0%, 100%": { 
+            transform: "rotate(-10deg)",
+          },
+          "50%": { 
+            transform: "rotate(20deg)",
+          },
+        },
+        "crane-lower": {
+          "0%, 100%": { 
+            transform: "translateY(0px)",
+          },
+          "50%": { 
+            transform: "translateY(20px)",
+          },
+        },
+        "fade-in-up": {
+          "0%": {
+            opacity: "0",
+            transform: "translateY(20px)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "translateY(0)",
+          },
+        },
+        "typing-dots": {
+          "0%, 60%, 100%": {
+            transform: "translateY(0)",
+          },
+          "30%": {
+            transform: "translateY(-10px)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+        "bounce-construction": "bounce-construction 2s ease-in-out infinite",
+        "hammer-swing": "hammer-swing 1.5s ease-in-out infinite",
+        "crane-lower": "crane-lower 3s ease-in-out infinite",
+        "fade-in-up": "fade-in-up 0.5s ease-out",
+        "typing-dots": "typing-dots 1.4s ease-in-out infinite",
       },
     },
   },

@@ -1,42 +1,63 @@
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
+/* Bob the Business Builder Design System - Construction Theme
+All colors MUST be HSL. Bright, playful, Duolingo-inspired with construction elements.
 */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    /* Blueprint Background Colors */
+    --background: 210 100% 97%;
+    --foreground: 220 25% 15%;
 
+    /* Construction Theme Colors */
+    --construction-yellow: 45 100% 55%;
+    --construction-orange: 25 100% 60%;
+    --blueprint-blue: 210 100% 65%;
+    --safety-orange: 15 100% 55%;
+    --hard-hat-yellow: 50 100% 50%;
+    
+    /* Semantic Colors */
+    --primary: 45 100% 55%; /* Construction Yellow */
+    --primary-foreground: 220 25% 15%;
+    
+    --secondary: 210 100% 65%; /* Blueprint Blue */
+    --secondary-foreground: 0 0% 100%;
+    
+    --accent: 25 100% 60%; /* Construction Orange */
+    --accent-foreground: 0 0% 100%;
+    
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
+    --card-foreground: 220 25% 15%;
+    
+    --muted: 210 40% 94%;
+    --muted-foreground: 220 15% 45%;
+    
+    --border: 210 30% 85%;
+    --input: 210 30% 85%;
+    --ring: 45 100% 55%;
+    
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    
+    /* Blueprint Grid Pattern */
+    --blueprint-grid: 210 50% 90%;
+    
+    /* Gradients */
+    --gradient-construction: linear-gradient(135deg, hsl(var(--construction-yellow)), hsl(var(--construction-orange)));
+    --gradient-blueprint: linear-gradient(180deg, hsl(var(--background)), hsl(var(--blueprint-grid)));
+    --gradient-hero: linear-gradient(135deg, hsl(var(--construction-yellow) / 0.1), hsl(var(--blueprint-blue) / 0.1));
+    
+    /* Shadows */
+    --shadow-construction: 0 10px 30px -5px hsl(var(--construction-yellow) / 0.3);
+    --shadow-blueprint: 0 5px 20px -5px hsl(var(--blueprint-blue) / 0.2);
+    --shadow-playful: 0 8px 25px -8px hsl(var(--construction-orange) / 0.4);
+    
+    --radius: 1rem;
 
     --sidebar-background: 0 0% 98%;
 
@@ -100,6 +121,80 @@ All colors MUST be HSL.
   }
 
   body {
-    @apply bg-background text-foreground;
+    @apply bg-background text-foreground font-nunito;
+    background-image: 
+      radial-gradient(circle at 25px 25px, hsl(var(--blueprint-grid)) 1px, transparent 1px);
+    background-size: 50px 50px;
+  }
+}
+
+@layer components {
+  /* Blueprint-style grid background */
+  .blueprint-bg {
+    @apply relative;
+  }
+  
+  .blueprint-bg::before {
+    content: '';
+    @apply absolute inset-0 opacity-30;
+    background-image: 
+      linear-gradient(hsl(var(--blueprint-blue) / 0.1) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--blueprint-blue) / 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  /* Construction-themed components */
+  .construction-sign {
+    @apply relative overflow-hidden rounded-2xl;
+    background: var(--gradient-construction);
+    box-shadow: var(--shadow-construction);
+  }
+  
+  .construction-sign::before {
+    content: '🚧';
+    @apply absolute -top-1 -right-1 text-2xl;
+  }
+
+  /* Bob's chat bubble */
+  .bob-bubble {
+    @apply relative rounded-3xl p-4;
+    background: hsl(var(--construction-yellow));
+    color: hsl(var(--primary-foreground));
+    box-shadow: var(--shadow-playful);
+  }
+  
+  .bob-bubble::before {
+    content: '';
+    @apply absolute -left-2 top-4 w-4 h-4;
+    background: hsl(var(--construction-yellow));
+    clip-path: polygon(100% 0%, 0% 50%, 100% 100%);
+  }
+
+  /* User chat bubble */
+  .user-bubble {
+    @apply relative rounded-3xl p-4 ml-auto;
+    background: hsl(var(--secondary));
+    color: hsl(var(--secondary-foreground));
+    box-shadow: var(--shadow-blueprint);
+  }
+  
+  .user-bubble::after {
+    content: '';
+    @apply absolute -right-2 top-4 w-4 h-4;
+    background: hsl(var(--secondary));
+    clip-path: polygon(0% 0%, 100% 50%, 0% 100%);
+  }
+
+  /* Animated elements */
+  .bounce-construction {
+    animation: bounce-construction 2s ease-in-out infinite;
+  }
+  
+  .hammer-swing {
+    animation: hammer-swing 1.5s ease-in-out infinite;
+  }
+  
+  .crane-lower {
+    animation: crane-lower 3s ease-in-out infinite;
   }
 }
