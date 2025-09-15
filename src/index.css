@@ -154,7 +154,8 @@ All colors MUST be HSL. Bright, playful, Duolingo-inspired with construction ele
   
   .prompt-container::before {
     content: '💡';
-    @apply absolute -top-4 left-8 text-4xl bg-card px-3 py-1 rounded-full border-3 border-construction-yellow;
+    @apply absolute -top-4 left-8 text-4xl bg-card px-3 py-1 rounded-full;
+    border: 3px solid hsl(var(--construction-yellow));
   }
   .construction-sign {
     @apply relative overflow-hidden rounded-2xl;

@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import MessageBubble from './MessageBubble';
 import TypingIndicator from './TypingIndicator';
+import AnimatedBob from './AnimatedBob';
 
 interface Message {
   id: string;
@@ -126,7 +127,10 @@ export default function ChatContainer({ initialIdea, onReset }: ChatContainerPro
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-8 animate-fade-in-up">
+    <div className="max-w-4xl mx-auto px-6 py-8 animate-fade-in-up relative">
+      {/* Animated Bob continues running around during chat */}
+      <AnimatedBob isActive={true} />
+      
       {/* Chat Header */}
       <div className="flex items-center justify-between mb-6 p-4 bg-card rounded-2xl shadow-lg">
         <div className="flex items-center gap-3">

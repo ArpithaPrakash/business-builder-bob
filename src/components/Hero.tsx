@@ -3,6 +3,7 @@ import { Hammer, Construction } from 'lucide-react';
 import bobMascot from '@/assets/bob-mascot.png';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import AnimatedBob from './AnimatedBob';
 
 interface HeroProps {
   onSubmitIdea: (idea: string) => void;
@@ -31,17 +32,14 @@ export default function Hero({ onSubmitIdea, isLoading }: HeroProps) {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center blueprint-bg overflow-hidden">
+      {/* Animated Bob running around */}
+      <AnimatedBob isActive={true} />
       
       <div className="container mx-auto px-6 text-center relative z-10">
-        {/* Brand Lockup - Made smaller */}
+        {/* Brand Lockup - Removed Bob icon */}
         <div className="mb-12 animate-fade-in-up">
           <div className="flex items-center justify-center gap-4 mb-4">
-            <img 
-              src={bobMascot} 
-              alt="Bob the Business Builder mascot" 
-              className="w-16 h-16 rounded-full border-4 border-primary shadow-lg"
-            />
-            <div className={`text-3xl transition-all duration-300 ${isTyping ? 'hammer-swing' : ''}`}>
+            <div className={`text-5xl transition-all duration-300 ${isTyping ? 'hammer-swing' : ''}`}>
               🔨
             </div>
           </div>
