@@ -123,8 +123,11 @@ All colors MUST be HSL. Bright, playful, Duolingo-inspired with construction ele
   body {
     @apply bg-background text-foreground font-nunito;
     background-image: 
-      radial-gradient(circle at 25px 25px, hsl(var(--blueprint-grid)) 1px, transparent 1px);
-    background-size: 50px 50px;
+      linear-gradient(hsl(var(--blueprint-blue) / 0.08) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--blueprint-blue) / 0.08) 1px, transparent 1px),
+      radial-gradient(circle at 25px 25px, hsl(var(--blueprint-blue) / 0.12) 1px, transparent 1px);
+    background-size: 25px 25px, 25px 25px, 50px 50px;
+    background-color: hsl(220 30% 96%);
   }
 }
 
@@ -136,10 +139,10 @@ All colors MUST be HSL. Bright, playful, Duolingo-inspired with construction ele
   
   .blueprint-bg::before {
     content: '';
-    @apply absolute inset-0 opacity-30;
+    @apply absolute inset-0 opacity-40;
     background-image: 
-      linear-gradient(hsl(var(--blueprint-blue) / 0.1) 1px, transparent 1px),
-      linear-gradient(90deg, hsl(var(--blueprint-blue) / 0.1) 1px, transparent 1px);
+      linear-gradient(hsl(var(--blueprint-blue) / 0.15) 1px, transparent 1px),
+      linear-gradient(90deg, hsl(var(--blueprint-blue) / 0.15) 1px, transparent 1px);
     background-size: 20px 20px;
   }
 

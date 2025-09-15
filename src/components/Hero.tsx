@@ -31,13 +31,6 @@ export default function Hero({ onSubmitIdea, isLoading }: HeroProps) {
 
   return (
     <div className="relative min-h-screen flex items-center justify-center blueprint-bg overflow-hidden">
-      {/* Animated construction elements */}
-      <div className="absolute top-20 right-10 text-6xl bounce-construction">
-        🏗️
-      </div>
-      <div className="absolute bottom-32 left-10 text-4xl crane-lower">
-        🏗️
-      </div>
       
       <div className="container mx-auto px-6 text-center relative z-10">
         {/* Brand Lockup */}
@@ -122,15 +115,6 @@ export default function Hero({ onSubmitIdea, isLoading }: HeroProps) {
           <p className="text-sm text-muted-foreground mt-4">
             💡 Ideas aren't saved by default
           </p>
-        </div>
-
-        {/* Decorative elements */}
-        <div className="flex justify-center gap-8 text-4xl opacity-60">
-          <span className="animate-bounce" style={{animationDelay: '0s'}}>🧱</span>
-          <span className="animate-bounce" style={{animationDelay: '0.2s'}}>⚒️</span>
-          <span className="animate-bounce" style={{animationDelay: '0.4s'}}>📐</span>
-          <span className="animate-bounce" style={{animationDelay: '0.6s'}}>🏗️</span>
-          <span className="animate-bounce" style={{animationDelay: '0.8s'}}>🧱</span>
         </div>
       </div>
     </div>
