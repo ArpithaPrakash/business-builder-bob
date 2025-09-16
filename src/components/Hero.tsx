@@ -2,17 +2,37 @@ import { useState, useRef, useEffect } from 'react';
 import { Hammer, Construction } from 'lucide-react';
 import bobMascot from '@/assets/bob-mascot.png';
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 
 interface HeroProps {
   onSubmitIdea: (idea: string) => void;
   isLoading: boolean;
 }
 
+const businessIdeas = [
+  "A subscription box for eco-friendly home products",
+  "An AI-powered personal fitness coach app",
+  "A platform connecting local farmers with restaurants",
+  "A virtual reality interior design service",
+  "A meal planning app for busy families",
+  "A peer-to-peer tool lending marketplace",
+  "An online platform for remote team building activities",
+  "A sustainable fashion rental service",
+  "A mental health support app for students",
+  "A smart home automation consulting business",
+  "A personalized skincare product line",
+  "A drone delivery service for rural areas",
+  "An online marketplace for handmade crafts",
+  "A virtual tutoring platform for coding",
+  "A zero-waste grocery delivery service"
+];
+
 export default function Hero({ onSubmitIdea, isLoading }: HeroProps) {
   const [idea, setIdea] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+  const [currentPlaceholder, setCurrentPlaceholder] = useState(businessIdeas[0]);
+  const [hasStartedTyping, setHasStartedTyping] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -20,6 +40,36 @@ export default function Hero({ onSubmitIdea, isLoading }: HeroProps) {
       onSubmitIdea(idea.trim());
     }
   };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const value = e.target.value;
+    setIdea(value);
+    
+    if (!hasStartedTyping && value.length > 0) {
+      setHasStartedTyping(true);
+    }
+    
+    // Auto-resize textarea
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
+    }
+  };
+
+  // Cycle through business ideas when not typing
+  useEffect(() => {
+    if (!hasStartedTyping) {
+      const interval = setInterval(() => {
+        setCurrentPlaceholder(prev => {
+          const currentIndex = businessIdeas.indexOf(prev);
+          const nextIndex = (currentIndex + 1) % businessIdeas.length;
+          return businessIdeas[nextIndex];
+        });
+      }, 3000);
+
+      return () => clearInterval(interval);
+    }
+  }, [hasStartedTyping]);
 
   useEffect(() => {
     if (idea.length > 0 && !isTyping) {
@@ -71,15 +121,15 @@ export default function Hero({ onSubmitIdea, isLoading }: HeroProps) {
               </label>
               
               <div className="relative">
-                <Input
-                  ref={inputRef}
+                <Textarea
+                  ref={textareaRef}
                   id="business-idea"
-                  type="text"
                   value={idea}
-                  onChange={(e) => setIdea(e.target.value)}
-                  placeholder="I want to start a..."
-                  className="w-full h-16 text-lg px-6 rounded-2xl border-4 border-secondary bg-card shadow-lg focus:border-primary transition-all duration-300 focus:shadow-xl"
+                  onChange={handleInputChange}
+                  placeholder={hasStartedTyping ? "" : currentPlaceholder}
+                  className="w-full min-h-16 max-h-32 text-lg px-6 py-4 rounded-2xl border-4 border-secondary bg-card shadow-lg focus:border-primary transition-all duration-300 focus:shadow-xl resize-none overflow-hidden"
                   disabled={isLoading}
+                  rows={1}
                 />
                 
                 {/* Construction elements that appear when typing */}
