@@ -10,29 +10,31 @@ interface HeroProps {
 }
 
 const businessIdeas = [
-  "A subscription box for eco-friendly home products",
-  "An AI-powered personal fitness coach app",
-  "A platform connecting local farmers with restaurants",
-  "A virtual reality interior design service",
-  "A meal planning app for busy families",
-  "A peer-to-peer tool lending marketplace",
-  "An online platform for remote team building activities",
-  "A sustainable fashion rental service",
-  "A mental health support app for students",
-  "A smart home automation consulting business",
-  "A personalized skincare product line",
-  "A drone delivery service for rural areas",
-  "An online marketplace for handmade crafts",
-  "A virtual tutoring platform for coding",
-  "A zero-waste grocery delivery service"
+  "a subscription box for eco-friendly home products",
+  "an AI-powered personal fitness coach app",
+  "a platform connecting local farmers with restaurants",
+  "a virtual reality interior design service",
+  "a meal planning app for busy families",
+  "a peer-to-peer tool lending marketplace",
+  "an online platform for remote team building activities",
+  "a sustainable fashion rental service",
+  "a mental health support app for students",
+  "a smart home automation consulting business",
+  "a personalized skincare product line",
+  "a drone delivery service for rural areas",
+  "an online marketplace for handmade crafts",
+  "a virtual tutoring platform for coding",
+  "a zero-waste grocery delivery service"
 ];
 
 export default function Hero({ onSubmitIdea, isLoading }: HeroProps) {
   const [idea, setIdea] = useState('');
-  const [isTyping, setIsTyping] = useState(false);
-  const [currentPlaceholder, setCurrentPlaceholder] = useState(businessIdeas[0]);
+  const [currentIdeaIndex, setCurrentIdeaIndex] = useState(0);
+  const [currentText, setCurrentText] = useState('');
+  const [isTypingAnimation, setIsTypingAnimation] = useState(true);
   const [hasStartedTyping, setHasStartedTyping] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const baseText = "I want to build ";
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -56,28 +58,40 @@ export default function Hero({ onSubmitIdea, isLoading }: HeroProps) {
     }
   };
 
-  // Cycle through business ideas when not typing
+  // Typewriter effect for business ideas
   useEffect(() => {
-    if (!hasStartedTyping) {
-      const interval = setInterval(() => {
-        setCurrentPlaceholder(prev => {
-          const currentIndex = businessIdeas.indexOf(prev);
-          const nextIndex = (currentIndex + 1) % businessIdeas.length;
-          return businessIdeas[nextIndex];
-        });
-      }, 3000);
+    if (hasStartedTyping) return;
 
-      return () => clearInterval(interval);
-    }
-  }, [hasStartedTyping]);
+    const currentIdea = businessIdeas[currentIdeaIndex];
+    let timeoutId: NodeJS.Timeout;
 
-  useEffect(() => {
-    if (idea.length > 0 && !isTyping) {
-      setIsTyping(true);
-      const timer = setTimeout(() => setIsTyping(false), 2000);
-      return () => clearTimeout(timer);
+    if (isTypingAnimation) {
+      // Typing animation
+      if (currentText.length < currentIdea.length) {
+        timeoutId = setTimeout(() => {
+          setCurrentText(currentIdea.slice(0, currentText.length + 1));
+        }, 50);
+      } else {
+        // Wait before starting to delete
+        timeoutId = setTimeout(() => {
+          setIsTypingAnimation(false);
+        }, 2000);
+      }
+    } else {
+      // Deleting animation
+      if (currentText.length > 0) {
+        timeoutId = setTimeout(() => {
+          setCurrentText(currentText.slice(0, -1));
+        }, 30);
+      } else {
+        // Move to next idea and start typing
+        setCurrentIdeaIndex((prev) => (prev + 1) % businessIdeas.length);
+        setIsTypingAnimation(true);
+      }
     }
-  }, [idea]);
+
+    return () => clearTimeout(timeoutId);
+  }, [currentText, isTypingAnimation, currentIdeaIndex, hasStartedTyping]);
 
   return (
     <div className="relative min-h-screen flex items-center justify-center blueprint-bg overflow-hidden">
@@ -91,7 +105,7 @@ export default function Hero({ onSubmitIdea, isLoading }: HeroProps) {
               alt="Bob the Business Builder mascot" 
               className="w-20 h-20 rounded-full border-4 border-primary shadow-lg"
             />
-            <div className={`text-4xl transition-all duration-300 ${isTyping ? 'hammer-swing' : ''}`}>
+            <div className="text-4xl transition-all duration-300">
               🔨
             </div>
           </div>
@@ -126,21 +140,11 @@ export default function Hero({ onSubmitIdea, isLoading }: HeroProps) {
                   id="business-idea"
                   value={idea}
                   onChange={handleInputChange}
-                  placeholder={hasStartedTyping ? "" : currentPlaceholder}
+                  placeholder={hasStartedTyping ? "" : baseText + currentText + (isTypingAnimation ? "|" : "")}
                   className="w-full min-h-16 max-h-32 text-lg px-6 py-4 rounded-2xl border-4 border-secondary bg-card shadow-lg focus:border-primary transition-all duration-300 focus:shadow-xl resize-none overflow-hidden"
                   disabled={isLoading}
                   rows={1}
                 />
-                
-                {/* Construction elements that appear when typing */}
-                {isTyping && (
-                  <div className="absolute right-4 top-1/2 -translate-y-1/2 flex gap-2">
-                    <Hammer className="text-primary animate-bounce" size={20} />
-                    <span className="text-sm text-muted-foreground animate-pulse">
-                      Building...
-                    </span>
-                  </div>
-                )}
               </div>
             </div>
 
