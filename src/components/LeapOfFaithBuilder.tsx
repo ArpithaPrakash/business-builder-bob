@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft, Brain, Target, Lightbulb } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { ArrowLeft, Brain, Target, Lightbulb, Key } from 'lucide-react';
 
 interface LeapOfFaithBuilderProps {
   cpsData: {
@@ -23,52 +24,102 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
     assumptions: [],
     isAnalyzing: false
   });
+  const [apiKey, setApiKey] = useState<string>('');
+  const [showApiKeyInput, setShowApiKeyInput] = useState<boolean>(false);
+
+  const generateAIResponse = async (circleType: string) => {
+    if (!apiKey.trim()) {
+      setShowApiKeyInput(true);
+      return;
+    }
+
+    let prompt = '';
+    let systemPrompt = '';
+
+    if (circleType === 'leap-of-faith') {
+      systemPrompt = `You are a Lean Startup Strategist expert in hypothesis-driven entrepreneurship with a deep understanding of Eric Ries' Lean Startup methodology. You specialize in helping early-stage founders break down their business ideas into testable assumptions.
+
+Goal: Identify the most critical Leap of Faith Assumptions (LOFAs) that underpin a founder's CPS (Customer-Problem-Solution) logic, focusing on those that could cause the business to fail if proven false.`;
+      
+      prompt = `Based on this CPS statement:
+Customer: ${cpsData.customer}
+Problem: ${cpsData.problem}
+Solution: ${cpsData.solution}
+
+Generate exactly 3 Leap of Faith Assumptions using this format:
+[LOFA #1]: [assumption]
+[LOFA #2]: [assumption]
+[LOFA #3]: [assumption]
+
+Focus on assumptions that, if proven wrong, would significantly jeopardize the viability of the idea.`;
+    } else if (circleType === 'hypothesis') {
+      systemPrompt = `You are a Hypothesis Framer for Startup Validation expert in hypothesis-driven product validation. Your task is to convert high-level assumptions into specific, testable hypotheses that can guide customer discovery interviews and experiments.`;
+      
+      prompt = `Based on this CPS statement:
+Customer: ${cpsData.customer}
+Problem: ${cpsData.problem}
+Solution: ${cpsData.solution}
+
+Generate exactly 3 testable hypotheses using this format:
+Hypothesis 1: We believe that [customer segment] will [specific behavior] because [reason or pain point].
+Hypothesis 2: We believe that [customer segment] will [specific behavior] because [reason or pain point].
+Hypothesis 3: We believe that [customer segment] will [specific behavior] because [reason or pain point].
+
+Make each hypothesis falsifiable and testable through real-world interaction.`;
+    } else {
+      systemPrompt = `You are a business validation expert helping founders identify key assumptions that need validation.`;
+      
+      prompt = `Based on this CPS statement:
+Customer: ${cpsData.customer}
+Problem: ${cpsData.problem}
+Solution: ${cpsData.solution}
+
+Generate 3 key validation questions that need to be answered:`;
+    }
+
+    try {
+      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${apiKey}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: 'gpt-4',
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: prompt }
+          ],
+          temperature: 0.7,
+          max_tokens: 800
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to generate AI response');
+      }
+
+      const data = await response.json();
+      const content = data.choices[0]?.message?.content || '';
+      
+      // Parse the response into array format
+      const lines = content.split('\n').filter(line => line.trim());
+      return lines.length > 0 ? lines : [content];
+    } catch (error) {
+      console.error('Error generating AI response:', error);
+      return [`Error generating response. Please check your API key and try again.`];
+    }
+  };
 
   const handleCircleClick = async (circleType: string) => {
     setSelectedCircle(circleType);
     setAnalysis({ assumptions: [], isAnalyzing: true });
 
-    // Simulate AI analysis
-    setTimeout(() => {
-      const mockOutput = generateMockOutput(cpsData, circleType);
-      setAnalysis({
-        assumptions: mockOutput,
-        isAnalyzing: false
-      });
-    }, 2000);
-  };
-
-  const generateMockOutput = (data: any, type: string) => {
-    if (type === 'leap-of-faith') {
-      // Generate specific Leap of Faith Assumptions based on actual CPS data
-      const customerSegment = data.customer;
-      const problemArea = data.problem;
-      const proposedSolution = data.solution;
-      
-      return [
-        `[LOFA #1]: ${customerSegment} are actively experiencing ${problemArea.toLowerCase()} as a significant pain point that affects their daily operations.`,
-        `[LOFA #2]: ${customerSegment} are willing to pay for ${proposedSolution.toLowerCase()} and will prioritize it over existing alternatives.`,
-        `[LOFA #3]: ${proposedSolution} will deliver measurable value that ${customerSegment.toLowerCase()} can't achieve through current methods or competitors.`
-      ];
-    } else if (type === 'hypothesis') {
-      // Generate specific testable hypotheses
-      const customerSegment = data.customer;
-      const problemArea = data.problem;
-      const proposedSolution = data.solution;
-      
-      return [
-        `Hypothesis 1: We believe that ${customerSegment.toLowerCase()} will actively seek out ${proposedSolution.toLowerCase()} because ${problemArea.toLowerCase()} is costing them time and resources daily.`,
-        `Hypothesis 2: We believe that ${customerSegment.toLowerCase()} will choose our ${proposedSolution.toLowerCase()} over existing solutions because it addresses their specific pain points more directly.`,
-        `Hypothesis 3: We believe that ${customerSegment.toLowerCase()} will see improved outcomes within 30 days of using ${proposedSolution.toLowerCase()} because it eliminates the friction they currently experience with ${problemArea.toLowerCase()}.`
-      ];
-    } else {
-      // Assumption analysis - focus on validation aspects
-      return [
-        `Key Validation Point: How do we verify that ${data.customer} actually experience ${data.problem.toLowerCase()} as frequently as we assume?`,
-        `Market Research Need: What evidence do we have that ${data.customer.toLowerCase()} are dissatisfied with current solutions?`,
-        `Behavioral Assumption: Will ${data.customer.toLowerCase()} actually change their current workflow to adopt ${data.solution.toLowerCase()}?`
-      ];
-    }
+    const aiResponse = await generateAIResponse(circleType);
+    setAnalysis({
+      assumptions: aiResponse,
+      isAnalyzing: false
+    });
   };
 
   const circles = [
@@ -127,6 +178,34 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
             </p>
           </div>
         </div>
+
+        {/* API Key Input */}
+        {showApiKeyInput && (
+          <div className="max-w-md mx-auto mb-8 p-4 bg-card border rounded-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <Key className="w-5 h-5 text-primary" />
+              <h3 className="font-semibold">OpenAI API Key Required</h3>
+            </div>
+            <p className="text-sm text-muted-foreground mb-3">
+              Enter your OpenAI API key to generate AI-powered insights:
+            </p>
+            <div className="flex gap-2">
+              <Input
+                type="password"
+                placeholder="sk-..."
+                value={apiKey}
+                onChange={(e) => setApiKey(e.target.value)}
+                className="flex-1"
+              />
+              <Button 
+                onClick={() => setShowApiKeyInput(false)}
+                disabled={!apiKey.trim()}
+              >
+                Save
+              </Button>
+            </div>
+          </div>
+        )}
 
         {/* Interactive Circles */}
         <div className="relative h-[500px] mb-12">
