@@ -267,36 +267,17 @@ Generate 3 key validation questions that need to be answered:`;
 
         {/* AI Analysis Section */}
         {selectedCircle && (
-          <div className="bg-card/80 backdrop-blur-sm rounded-lg p-6 mb-8 border shadow-lg">
+        <div className="bg-card/80 backdrop-blur-sm rounded-lg p-6 mb-8 border shadow-lg">
             <div className="flex items-center gap-2 mb-4">
               <Brain className="w-6 h-6 text-primary" />
-              <h3 className="text-xl font-bold">
-                {selectedCircle === 'leap-of-faith' && '🚀 Lean Startup Strategist - Leap of Faith Assumptions'}
-                {selectedCircle === 'hypothesis' && '🤖 Hypothesis Framer - Testable Hypotheses'}
-                {selectedCircle === 'assumption' && '🧠 Hypothesis Framer - Testable Hypotheses'}
-              </h3>
+              <h3 className="text-xl font-bold">AI Analysis Results</h3>
             </div>
             
             <div className="mb-6">
-              {selectedCircle === 'assumption' && (
-                <div>
-                  <h4 className="text-lg font-semibold text-foreground mb-2">
-                    Leap of Faith Assumptions
-                  </h4>
-                </div>
-              )}
-              
-              {selectedCircle === 'hypothesis' && (
-                <div>
-                  <h4 className="text-lg font-semibold text-foreground mb-2">
-                    Testable Hypotheses
-                  </h4>
-                  {(leapOfFaithResults?.length ?? 0) === 0 && (
-                    <p className="text-yellow-600 mb-4 font-medium">
-                      ⚠️ Please click on "Leap of Faith Assumptions" first to generate assumptions before creating hypotheses.
-                    </p>
-                  )}
-                </div>
+              {(leapOfFaithResults?.length ?? 0) === 0 && selectedCircle === 'hypothesis' && (
+                <p className="text-yellow-600 mb-4 font-medium">
+                  ⚠️ Please click on "Leap of Faith Assumptions" first to generate assumptions before creating hypotheses.
+                </p>
               )}
             </div>
 
@@ -309,10 +290,6 @@ Generate 3 key validation questions that need to be answered:`;
               </div>
             ) : analysis.assumptions && analysis.assumptions.length > 0 ? (
               <div>
-                <h4 className="text-lg font-semibold mb-4">
-                  {selectedCircle === 'assumption' && 'Leap of Faith Assumptions:'}
-                  {selectedCircle === 'hypothesis' && 'Testable Hypotheses:'}
-                </h4>
                 <div className="space-y-3">
                   {(analysis.assumptions || []).map((assumption, index) => (
                     <div key={index} className="bg-muted/50 p-3 rounded-lg">
