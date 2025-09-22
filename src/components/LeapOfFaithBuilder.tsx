@@ -24,6 +24,7 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
     assumptions: [],
     isAnalyzing: false
   });
+  const [leapOfFaithResults, setLeapOfFaithResults] = useState<string[]>([]);
   const [apiKey, setApiKey] = useState<string>('');
   const [showApiKeyInput, setShowApiKeyInput] = useState<boolean>(false);
 
@@ -37,33 +38,59 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
     let systemPrompt = '';
 
     if (circleType === 'leap-of-faith') {
-      systemPrompt = `You are a Lean Startup Strategist expert in hypothesis-driven entrepreneurship with a deep understanding of Eric Ries' Lean Startup methodology. You specialize in helping early-stage founders break down their business ideas into testable assumptions.
+      systemPrompt = `Role: Lean Startup Strategist
 
-Goal: Identify the most critical Leap of Faith Assumptions (LOFAs) that underpin a founder's CPS (Customer-Problem-Solution) logic, focusing on those that could cause the business to fail if proven false.`;
+Goal: Identify the most critical Leap of Faith Assumptions (LOFAs) that underpin a founder's CPS logic, focusing on those that could cause the business to fail if proven false.
+
+Backstory: You are an expert in hypothesis-driven entrepreneurship with a deep understanding of Eric Ries' Lean Startup methodology. You specialize in helping early-stage founders break down their business ideas into testable assumptions. Your superpower is translating abstract ideas into clear, falsifiable leaps of faith that can be validated through customer discovery.
+
+Task: Extract Leap of Faith Assumptions from CPS
+
+Steps to Perform:
+1. Carefully parse the CPS input to identify: Who the customer is, What problem they are believed to have, What solution is proposed to solve it
+2. Determine the implicit assumptions the founder is making for the solution to work
+3. Identify which of these are "leap of faith" assumptions — the riskiest beliefs that must be true
+4. Output 2–3 assumptions phrased as falsifiable beliefs (i.e., they can be validated or invalidated through interviews or experiments)`;
       
       prompt = `Based on this CPS statement:
 Customer: ${cpsData.customer}
 Problem: ${cpsData.problem}
 Solution: ${cpsData.solution}
 
-Generate exactly 3 Leap of Faith Assumptions using this format:
+Generate 2-3 Leap of Faith Assumptions using this exact format:
 [LOFA #1]: [assumption]
 [LOFA #2]: [assumption]
 [LOFA #3]: [assumption]
 
 Focus on assumptions that, if proven wrong, would significantly jeopardize the viability of the idea.`;
     } else if (circleType === 'hypothesis') {
-      systemPrompt = `You are a Hypothesis Framer for Startup Validation expert in hypothesis-driven product validation. Your task is to convert high-level assumptions into specific, testable hypotheses that can guide customer discovery interviews and experiments.`;
+      if (leapOfFaithResults.length === 0) {
+        return ['Please click on "Leap of Faith" first to generate assumptions before creating hypotheses.'];
+      }
       
-      prompt = `Based on this CPS statement:
+      systemPrompt = `Role: Hypothesis Framer for Startup Validation
+
+You are an expert in hypothesis-driven product validation. Your job is to take high-level assumptions (Leap of Faith Assumptions) and refine them into specific, falsifiable hypotheses that can guide customer discovery interviews and experiments. You do not interview users — you only create structured hypotheses.
+
+Task: Create Testable Hypotheses from Leap of Faith Assumptions
+
+Steps to Perform:
+1. Read each Leap of Faith Assumption carefully
+2. For each assumption, ask: "What would the world look like if this were true?" "How could we test this through real user behavior?"
+3. Rewrite the assumption into a hypothesis using the format: We believe that [customer segment] will [specific behavior] because [reason or pain point]`;
+      
+      prompt = `Based on these Leap of Faith Assumptions:
+${leapOfFaithResults.join('\n')}
+
+And this CPS context:
 Customer: ${cpsData.customer}
 Problem: ${cpsData.problem}
 Solution: ${cpsData.solution}
 
-Generate exactly 3 testable hypotheses using this format:
-Hypothesis 1: We believe that [customer segment] will [specific behavior] because [reason or pain point].
-Hypothesis 2: We believe that [customer segment] will [specific behavior] because [reason or pain point].
-Hypothesis 3: We believe that [customer segment] will [specific behavior] because [reason or pain point].
+Generate testable hypotheses using this exact format:
+Hypothesis 1 (from LOFA 1): We believe that [customer segment] will [specific behavior] because [reason or pain point].
+Hypothesis 2 (from LOFA 2): We believe that [customer segment] will [specific behavior] because [reason or pain point].
+Hypothesis 3 (from LOFA 3): We believe that [customer segment] will [specific behavior] because [reason or pain point].
 
 Make each hypothesis falsifiable and testable through real-world interaction.`;
     } else {
@@ -78,7 +105,7 @@ Generate 3 key validation questions that need to be answered:`;
     }
 
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -121,6 +148,11 @@ Generate 3 key validation questions that need to be answered:`;
       assumptions: aiResponse,
       isAnalyzing: false
     });
+
+    // Store leap of faith results for hypothesis generation
+    if (circleType === 'leap-of-faith') {
+      setLeapOfFaithResults(aiResponse);
+    }
   };
 
   const circles = [
@@ -140,7 +172,7 @@ Generate 3 key validation questions that need to be answered:`;
     },
     {
       id: 'assumption',
-      title: 'Assumption',
+      title: 'Respective Hypothesis',
       icon: Brain,
       position: 'bottom-20 left-1/2 transform -translate-x-1/2',
       color: 'construction-orange'
@@ -237,7 +269,7 @@ Generate 3 key validation questions that need to be answered:`;
               <h3 className="text-xl font-bold">
                 {selectedCircle === 'leap-of-faith' && '🚀 Lean Startup Strategist - Leap of Faith Assumptions'}
                 {selectedCircle === 'hypothesis' && '🤖 Hypothesis Framer - Testable Hypotheses'}
-                {selectedCircle === 'assumption' && '🚀 Your Lean Startup Strategist is here!'}
+                {selectedCircle === 'assumption' && '🧠 Hypothesis Framer - Testable Hypotheses'}
               </h3>
             </div>
             
@@ -267,11 +299,16 @@ Generate 3 key validation questions that need to be answered:`;
               {selectedCircle === 'assumption' && (
                 <div>
                   <p className="text-muted-foreground mb-4">
-                    Let's dig deep into your CPS (Customer–Problem–Solution) to extract key insights for your business validation.
+                    <strong>Task:</strong> Convert high-level assumptions (Leap of Faith Assumptions) into specific, testable hypotheses that can guide customer discovery interviews and experiments.
                   </p>
                   <p className="text-muted-foreground mb-4">
-                    We'll examine your customer, the problem, and the proposed solution to pinpoint critical elements that need validation.
+                    I'm converting each Leap of Faith Assumption into a clear, falsifiable hypothesis using the format: "We believe that [customer segment] will [specific behavior] because [reason or pain point]."
                   </p>
+                  {leapOfFaithResults.length === 0 && (
+                    <p className="text-yellow-600 mb-4 font-medium">
+                      ⚠️ Please click on "Leap of Faith" first to generate assumptions before creating hypotheses.
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -281,14 +318,14 @@ Generate 3 key validation questions that need to be answered:`;
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
                 {selectedCircle === 'leap-of-faith' && 'Analyzing Leap of Faith Assumptions...'}
                 {selectedCircle === 'hypothesis' && 'Generating testable hypotheses...'}
-                {selectedCircle === 'assumption' && 'Analyzing your assumptions...'}
+                {selectedCircle === 'assumption' && 'Generating testable hypotheses from your assumptions...'}
               </div>
             ) : analysis.assumptions && analysis.assumptions.length > 0 ? (
               <div>
                 <h4 className="text-lg font-semibold mb-4">
                   {selectedCircle === 'leap-of-faith' && '🧠 Leap of Faith Assumptions Identified:'}
                   {selectedCircle === 'hypothesis' && '📋 Testable Hypotheses Generated:'}
-                  {selectedCircle === 'assumption' && '🧠 Analysis Results:'}
+                  {selectedCircle === 'assumption' && '📋 Testable Hypotheses Generated:'}
                 </h4>
                 <div className="space-y-3">
                   {analysis.assumptions.map((assumption, index) => (
