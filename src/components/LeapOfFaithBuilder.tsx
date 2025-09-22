@@ -106,43 +106,8 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
           </div>
         </div>
 
-        {/* Interactive Circles with Connecting Threads */}
+        {/* Interactive Circles */}
         <div className="relative h-[500px] mb-12">
-          {/* Fun Thread-like Connectors */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 500" style={{ zIndex: 1 }}>
-            {/* Thread from Leap of Faith to Respective Hypothesis */}
-            <path 
-              d="M 268 193 Q 300 280 332 307" 
-              stroke="hsl(var(--construction-yellow))" 
-              strokeWidth="4" 
-              fill="none"
-              className="opacity-70"
-              style={{
-                filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))',
-                strokeLinecap: 'round'
-              }}
-            />
-            {/* Thread from Respective Hypothesis to Assumption */}
-            <path 
-              d="M 468 307 Q 500 280 532 193" 
-              stroke="hsl(var(--construction-green))" 
-              strokeWidth="4" 
-              fill="none"
-              className="opacity-70"
-              style={{
-                filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))',
-                strokeLinecap: 'round'
-              }}
-            />
-            
-            {/* Add some fiber texture to threads */}
-            <defs>
-              <filter id="fiberTexture">
-                <feTurbulence baseFrequency="0.9" numOctaves="3" result="turbulence"/>
-                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="2"/>
-              </filter>
-            </defs>
-          </svg>
           
           {circles.map((circle) => {
             const IconComponent = circle.icon;
