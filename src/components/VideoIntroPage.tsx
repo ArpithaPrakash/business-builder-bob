@@ -9,22 +9,20 @@ interface VideoIntroPageProps {
 }
 
 const VideoIntroPage = ({ businessIdea, onBack, onStartBuilding }: VideoIntroPageProps) => {
-  const businessName = generateBusinessName(businessIdea);
-  
   return (
     <div className="min-h-screen blueprint-bg p-6">
       <div className="max-w-4xl mx-auto">
         {/* Title Section */}
         <div className="text-center mb-8">
           <h1 className="text-5xl font-black text-primary mb-4">
-            Awesome! Let's build {businessName}
+            Awesome! Let's build CPS Hypothesis
           </h1>
         </div>
 
         {/* Subtitle Section */}
         <div className="text-center mb-12">
           <p className="text-xl text-muted-foreground">
-            Please watch the following one-minute video to learn about {businessName}.
+            Please watch the following one-minute video to learn about the CPS hypothesis.
           </p>
         </div>
 
