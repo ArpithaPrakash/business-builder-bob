@@ -70,19 +70,27 @@ Solution: ${cpsData.solution}
 Generate 2-3 Leap of Faith Assumptions using the exact format specified in the task definition above. Focus on assumptions that, if proven wrong, would significantly jeopardize the viability of the idea.`;
     } else if (circleType === 'hypothesis') {
       if (leapOfFaithResults.length === 0) {
-        return ['Please click on "Leap of Faith" first to generate assumptions before creating hypotheses.'];
+        return ['Please click on "Leap of Faith Assumptions" first to generate assumptions before creating hypotheses.'];
       }
       
-      systemPrompt = `Role: Hypothesis Framer for Startup Validation
+      systemPrompt = `🤖 Agent Prompt: Generate Hypotheses from Leap of Faith Assumptions
+🔹 Agent Role: Hypothesis Framer for Startup Validation
 
 You are an expert in hypothesis-driven product validation. Your job is to take high-level assumptions (Leap of Faith Assumptions) and refine them into specific, falsifiable hypotheses that can guide customer discovery interviews and experiments. You do not interview users — you only create structured hypotheses.
 
-Task: Create Testable Hypotheses from Leap of Faith Assumptions
+🔸 Task Name: Create Testable Hypotheses from Leap of Faith Assumptions
 
-Steps to Perform:
+📝 Task Description: You will receive 2–3 Leap of Faith Assumptions. These are risky, unproven beliefs that underpin a startup idea. Your job is to convert each into a clear, falsifiable hypothesis — something that can be validated or invalidated through real-world interaction.
+
+🪜 Steps to Perform:
 1. Read each Leap of Faith Assumption carefully
 2. For each assumption, ask: "What would the world look like if this were true?" "How could we test this through real user behavior?"
-3. Rewrite the assumption into a hypothesis using the format: We believe that [customer segment] will [specific behavior] because [reason or pain point]`;
+3. Rewrite the assumption into a hypothesis using the format: We believe that [customer segment] will [specific behavior] because [reason or pain point]
+
+✅ Expected Output Format:
+Hypothesis 1 (from LOFA 1): We believe that [customer segment] will [behavior] because [reason].
+Hypothesis 2 (from LOFA 2): We believe that [customer segment] will [behavior] because [reason].
+Hypothesis 3 (optional): We believe that [customer segment] will [behavior] because [reason].`;
       
       prompt = `Based on these Leap of Faith Assumptions:
 ${leapOfFaithResults.join('\n')}
@@ -92,12 +100,7 @@ Customer: ${cpsData.customer}
 Problem: ${cpsData.problem}
 Solution: ${cpsData.solution}
 
-Generate testable hypotheses using this exact format:
-Hypothesis 1 (from LOFA 1): We believe that [customer segment] will [specific behavior] because [reason or pain point].
-Hypothesis 2 (from LOFA 2): We believe that [customer segment] will [specific behavior] because [reason or pain point].
-Hypothesis 3 (from LOFA 3): We believe that [customer segment] will [specific behavior] because [reason or pain point].
-
-Make each hypothesis falsifiable and testable through real-world interaction.`;
+Convert each Leap of Faith Assumption into testable hypotheses using the exact format specified above. Make each hypothesis falsifiable and testable through real-world interaction.`;
     } else {
       systemPrompt = `You are a business validation expert helping founders identify key assumptions that need validation.`;
       
