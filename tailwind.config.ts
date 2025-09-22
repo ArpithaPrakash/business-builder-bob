@@ -27,6 +27,7 @@ export default {
         construction: {
           yellow: "hsl(var(--construction-yellow))",
           orange: "hsl(var(--construction-orange))",
+          green: "hsl(var(--construction-green))",
           blue: "hsl(var(--blueprint-blue))",
           safety: "hsl(var(--safety-orange))",
           hardhat: "hsl(var(--hard-hat-yellow))",
