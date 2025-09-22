@@ -30,23 +30,37 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
 
     // Simulate AI analysis
     setTimeout(() => {
-      const mockAssumptions = generateMockAssumptions(cpsData, circleType);
+      const mockOutput = generateMockOutput(cpsData, circleType);
       setAnalysis({
-        assumptions: mockAssumptions,
+        assumptions: mockOutput,
         isAnalyzing: false
       });
     }, 2000);
   };
 
-  const generateMockAssumptions = (data: any, type: string) => {
-    // Generate assumptions based on the CPS data
-    const assumptions = [
-      `[LOFA #1]: ${data.customer} are actively seeking solutions to ${data.problem.toLowerCase()}.`,
-      `[LOFA #2]: ${data.customer} are willing to adopt ${data.solution.toLowerCase()} as their preferred approach.`,
-      `[LOFA #3]: ${data.solution} will effectively address the core pain points experienced by ${data.customer}.`
-    ];
-    
-    return assumptions;
+  const generateMockOutput = (data: any, type: string) => {
+    if (type === 'leap-of-faith') {
+      // Generate Leap of Faith Assumptions
+      return [
+        `[LOFA #1]: ${data.customer} are actively seeking solutions to ${data.problem.toLowerCase()}.`,
+        `[LOFA #2]: ${data.customer} are willing to adopt and pay for ${data.solution.toLowerCase()}.`,
+        `[LOFA #3]: ${data.solution} will effectively solve the core pain points better than existing alternatives.`
+      ];
+    } else if (type === 'hypothesis') {
+      // Generate Respective Hypotheses
+      return [
+        `Hypothesis 1: We believe that ${data.customer.toLowerCase()} will actively try new solutions if they reduce friction in ${data.problem.toLowerCase()}.`,
+        `Hypothesis 2: We believe that ${data.customer.toLowerCase()} will adopt ${data.solution.toLowerCase()} because it addresses their specific pain points more effectively than current alternatives.`,
+        `Hypothesis 3: We believe that ${data.customer.toLowerCase()} using ${data.solution.toLowerCase()} will see measurable improvements in their workflow because it reduces complexity and increases efficiency.`
+      ];
+    } else {
+      // Default assumption analysis for other circles
+      return [
+        `Analysis for ${type}: This component focuses on validating key aspects of your business model.`,
+        `Key insight: Understanding how this relates to your customer-problem-solution fit is crucial.`,
+        `Recommendation: Consider how this element can be measured and validated through customer feedback.`
+      ];
+    }
   };
 
   const circles = [
@@ -132,25 +146,62 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
           <div className="bg-card/80 backdrop-blur-sm rounded-lg p-6 mb-8 border shadow-lg">
             <div className="flex items-center gap-2 mb-4">
               <Brain className="w-6 h-6 text-primary" />
-              <h3 className="text-xl font-bold">🚀 Your Lean Startup Strategist is here!</h3>
+              <h3 className="text-xl font-bold">
+                {selectedCircle === 'leap-of-faith' && '🚀 Lean Startup Strategist - Leap of Faith Assumptions'}
+                {selectedCircle === 'hypothesis' && '🤖 Hypothesis Framer - Testable Hypotheses'}
+                {selectedCircle === 'assumption' && '🚀 Your Lean Startup Strategist is here!'}
+              </h3>
             </div>
             
-            <p className="text-muted-foreground mb-6">
-              Let's dig deep into your CPS (Customer–Problem–Solution) to extract Leap of Faith Assumptions (LOFAs). These are the assumptions that, if proven false, could make or break your business.
-            </p>
-            
-            <p className="text-muted-foreground mb-6">
-              We'll examine your customer, the problem, and the proposed solution to pinpoint those critical assumptions that need validation.
-            </p>
+            <div className="mb-6">
+              {selectedCircle === 'leap-of-faith' && (
+                <div>
+                  <p className="text-muted-foreground mb-4">
+                    <strong>Goal:</strong> Identify the most critical Leap of Faith Assumptions (LOFAs) that underpin your CPS logic, focusing on those that could cause the business to fail if proven false.
+                  </p>
+                  <p className="text-muted-foreground mb-4">
+                    As an expert in hypothesis-driven entrepreneurship with deep understanding of Eric Ries' Lean Startup methodology, I specialize in helping early-stage founders break down their business ideas into testable assumptions.
+                  </p>
+                </div>
+              )}
+              
+              {selectedCircle === 'hypothesis' && (
+                <div>
+                  <p className="text-muted-foreground mb-4">
+                    <strong>Task:</strong> Convert high-level assumptions (Leap of Faith Assumptions) into specific, testable hypotheses that can guide customer discovery interviews and experiments.
+                  </p>
+                  <p className="text-muted-foreground mb-4">
+                    I'm converting each assumption into a clear, falsifiable hypothesis using the format: "We believe that [customer segment] will [specific behavior] because [reason or pain point]."
+                  </p>
+                </div>
+              )}
+              
+              {selectedCircle === 'assumption' && (
+                <div>
+                  <p className="text-muted-foreground mb-4">
+                    Let's dig deep into your CPS (Customer–Problem–Solution) to extract key insights for your business validation.
+                  </p>
+                  <p className="text-muted-foreground mb-4">
+                    We'll examine your customer, the problem, and the proposed solution to pinpoint critical elements that need validation.
+                  </p>
+                </div>
+              )}
+            </div>
 
             {analysis.isAnalyzing ? (
               <div className="flex items-center gap-2 text-muted-foreground">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary"></div>
-                Analyzing your assumptions...
+                {selectedCircle === 'leap-of-faith' && 'Analyzing Leap of Faith Assumptions...'}
+                {selectedCircle === 'hypothesis' && 'Generating testable hypotheses...'}
+                {selectedCircle === 'assumption' && 'Analyzing your assumptions...'}
               </div>
             ) : analysis.assumptions.length > 0 ? (
               <div>
-                <h4 className="text-lg font-semibold mb-4">🧠 Assumptions Identified for Your Business Idea:</h4>
+                <h4 className="text-lg font-semibold mb-4">
+                  {selectedCircle === 'leap-of-faith' && '🧠 Leap of Faith Assumptions Identified:'}
+                  {selectedCircle === 'hypothesis' && '📋 Testable Hypotheses Generated:'}
+                  {selectedCircle === 'assumption' && '🧠 Analysis Results:'}
+                </h4>
                 <div className="space-y-3">
                   {analysis.assumptions.map((assumption, index) => (
                     <div key={index} className="bg-muted/50 p-3 rounded-lg">
