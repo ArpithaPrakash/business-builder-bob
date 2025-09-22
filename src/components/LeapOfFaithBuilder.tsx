@@ -282,7 +282,7 @@ Generate 3 key validation questions that need to be answered:`;
                 {selectedCircle === 'hypothesis' && 'Generating testable hypotheses...'}
                 {selectedCircle === 'assumption' && 'Analyzing your assumptions...'}
               </div>
-            ) : analysis.assumptions.length > 0 ? (
+            ) : analysis.assumptions && analysis.assumptions.length > 0 ? (
               <div>
                 <h4 className="text-lg font-semibold mb-4">
                   {selectedCircle === 'leap-of-faith' && '🧠 Leap of Faith Assumptions Identified:'}
