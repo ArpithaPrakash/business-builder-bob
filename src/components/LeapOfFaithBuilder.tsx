@@ -132,6 +132,9 @@ Generate 3 key validation questions that need to be answered:`;
       });
 
       if (!response.ok) {
+        if (response.status === 429) {
+          throw new Error('QUOTA_EXCEEDED');
+        }
         throw new Error('Failed to generate AI response');
       }
 
@@ -143,6 +146,9 @@ Generate 3 key validation questions that need to be answered:`;
       return lines.length > 0 ? lines : [content];
     } catch (error) {
       console.error('Error generating AI response:', error);
+      if (error instanceof Error && error.message === 'QUOTA_EXCEEDED') {
+        return [`You've exceeded your daily Gemini API quota (50 requests). Please wait until tomorrow or upgrade your API plan for higher limits.`];
+      }
       return [`Error generating response. Please check your API key and try again.`];
     }
   };
