@@ -78,20 +78,21 @@ Generate 3 key validation questions that need to be answered:`;
     }
 
     try {
-      const response = await fetch('https://api.openai.com/v1/chat/completions', {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          model: 'gpt-4',
-          messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: prompt }
-          ],
-          temperature: 0.7,
-          max_tokens: 800
+          contents: [{
+            parts: [{
+              text: `${systemPrompt}\n\n${prompt}`
+            }]
+          }],
+          generationConfig: {
+            temperature: 0.7,
+            maxOutputTokens: 800,
+          }
         }),
       });
 
@@ -100,7 +101,7 @@ Generate 3 key validation questions that need to be answered:`;
       }
 
       const data = await response.json();
-      const content = data.choices[0]?.message?.content || '';
+      const content = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
       
       // Parse the response into array format
       const lines = content.split('\n').filter(line => line.trim());
@@ -187,7 +188,7 @@ Generate 3 key validation questions that need to be answered:`;
               <h3 className="font-semibold">OpenAI API Key Required</h3>
             </div>
             <p className="text-sm text-muted-foreground mb-3">
-              Enter your OpenAI API key to generate AI-powered insights:
+              Enter your Gemini API key to generate AI-powered insights:
             </p>
             <div className="flex gap-2">
               <Input
