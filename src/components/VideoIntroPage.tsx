@@ -29,15 +29,14 @@ const VideoIntroPage = ({ businessIdea, onBack, onStartBuilding }: VideoIntroPag
         {/* Video Section */}
         <div className="mb-12">
           <div className="bg-construction-yellow rounded-lg p-8 shadow-construction max-w-2xl mx-auto">
-            <div className="aspect-video bg-construction-yellow/50 rounded-lg border-4 border-construction-orange flex items-center justify-center mb-4">
-              <div className="text-center">
-                <div className="bg-white/20 rounded-full p-6 mb-4 inline-flex">
-                  <Play className="w-12 h-12 text-construction-orange fill-current" />
-                </div>
-                <p className="text-construction-dark font-semibold text-lg">
-                  (Place the video here)
-                </p>
-              </div>
+            <div className="aspect-video bg-white rounded-lg border-4 border-construction-orange overflow-hidden">
+              <iframe
+                src="https://www.loom.com/embed/5103f98cf3474de6b37b20753ba5fdb7"
+                frameBorder="0"
+                allowFullScreen
+                className="w-full h-full"
+                title="CPS Hypothesis Video"
+              ></iframe>
             </div>
           </div>
         </div>
