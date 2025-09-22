@@ -26,6 +26,7 @@ const Index = () => {
   };
 
   const handleStartBuilding = () => {
+    console.log('Start Building clicked - navigating to CPS');
     setCurrentStep('cps');
   };
 
