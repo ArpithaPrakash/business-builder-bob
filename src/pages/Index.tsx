@@ -2,11 +2,13 @@ import { useState } from 'react';
 import Hero from '@/components/Hero';
 import VideoIntroPage from '@/components/VideoIntroPage';
 import CPSHypothesisBuilder from '@/components/CPSHypothesisBuilder';
+import LeapOfFaithBuilder from '@/components/LeapOfFaithBuilder';
 
 const Index = () => {
   const [currentIdea, setCurrentIdea] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState<'hero' | 'video' | 'cps'>('hero');
+  const [currentStep, setCurrentStep] = useState<'hero' | 'video' | 'cps' | 'lofa'>('hero');
+  const [cpsData, setCpsData] = useState<any>(null);
 
   const handleIdeaSubmit = async (idea: string) => {
     setIsLoading(true);
@@ -35,8 +37,17 @@ const Index = () => {
   };
 
   const handleCPSContinue = (data: any) => {
-    // Will implement XPS page later
-    console.log("CPS data:", data);
+    setCpsData(data);
+    setCurrentStep('lofa');
+  };
+
+  const handleBackToCPS = () => {
+    setCurrentStep('cps');
+  };
+
+  const handleLOFANext = () => {
+    // Will implement next phase later
+    console.log("Moving to next phase with data:", cpsData);
   };
 
   return (
@@ -57,6 +68,14 @@ const Index = () => {
         <CPSHypothesisBuilder
           onBack={handleBackToVideo}
           onContinue={handleCPSContinue}
+        />
+      )}
+      
+      {currentStep === 'lofa' && cpsData && (
+        <LeapOfFaithBuilder
+          cpsData={cpsData}
+          onBack={handleBackToCPS}
+          onNext={handleLOFANext}
         />
       )}
     </div>
