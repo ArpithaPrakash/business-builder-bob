@@ -114,10 +114,10 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
               <button
                 key={circle.id}
                 onClick={() => handleCircleClick(circle.id)}
-                className={`absolute ${circle.position} w-24 h-24 rounded-full border-4 border-${circle.color} bg-background/80 backdrop-blur-sm hover:bg-${circle.color}/10 transition-all duration-300 hover:scale-110 flex flex-col items-center justify-center group shadow-lg`}
+                className={`absolute ${circle.position} w-36 h-36 rounded-full border-4 border-${circle.color} bg-background/80 backdrop-blur-sm hover:bg-${circle.color}/10 transition-all duration-300 hover:scale-105 flex flex-col items-center justify-center group shadow-lg animate-fade-in`}
               >
-                <IconComponent className={`w-8 h-8 text-${circle.color} mb-1`} />
-                <span className={`text-xs font-semibold text-${circle.color} text-center leading-tight`}>
+                <IconComponent className={`w-12 h-12 text-${circle.color} mb-2`} />
+                <span className={`text-sm font-semibold text-${circle.color} text-center leading-tight`}>
                   {circle.title}
                 </span>
               </button>
