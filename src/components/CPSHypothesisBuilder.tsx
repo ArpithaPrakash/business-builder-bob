@@ -85,13 +85,13 @@ const CPSHypothesisBuilder = ({ onBack, onContinue }: CPSHypothesisBuilderProps)
           </div>
 
           {/* Solution Section */}
-          <div className="bg-primary/10 rounded-xl p-8 border-2 border-primary/20">
+          <div className="bg-construction-green/20 rounded-xl p-8 border-2 border-construction-green/30">
             <div className="flex items-center gap-3 mb-6">
-              <div className="p-3 bg-primary/20 rounded-lg">
-                <Lightbulb className="w-6 h-6 text-primary" />
+              <div className="p-3 bg-construction-green/20 rounded-lg">
+                <Lightbulb className="w-6 h-6 text-construction-green" />
               </div>
               <div>
-                <h2 className="text-2xl font-bold text-primary">Solution</h2>
+                <h2 className="text-2xl font-bold text-construction-green">Solution</h2>
                 <p className="text-muted-foreground">How do you solve your customers' problem?</p>
               </div>
             </div>
