@@ -185,7 +185,7 @@ Generate 3 key validation questions that need to be answered:`;
           <div className="max-w-md mx-auto mb-8 p-4 bg-card border rounded-lg">
             <div className="flex items-center gap-2 mb-3">
               <Key className="w-5 h-5 text-primary" />
-              <h3 className="font-semibold">OpenAI API Key Required</h3>
+              <h3 className="font-semibold">Gemini API Key Required</h3>
             </div>
             <p className="text-sm text-muted-foreground mb-3">
               Enter your Gemini API key to generate AI-powered insights:
