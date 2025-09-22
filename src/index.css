@@ -137,9 +137,9 @@ All colors MUST be HSL. Bright, playful, Duolingo-inspired with construction ele
     @apply relative;
   }
   
-  .blueprint-bg::before {
+.blueprint-bg::before {
     content: '';
-    @apply absolute inset-0 opacity-40;
+    @apply absolute inset-0 opacity-40 pointer-events-none;
     background-image: 
       linear-gradient(hsl(var(--blueprint-blue) / 0.15) 1px, transparent 1px),
       linear-gradient(90deg, hsl(var(--blueprint-blue) / 0.15) 1px, transparent 1px);
