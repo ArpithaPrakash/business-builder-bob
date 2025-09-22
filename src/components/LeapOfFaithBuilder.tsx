@@ -40,25 +40,33 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
 
   const generateMockOutput = (data: any, type: string) => {
     if (type === 'leap-of-faith') {
-      // Generate Leap of Faith Assumptions
+      // Generate specific Leap of Faith Assumptions based on actual CPS data
+      const customerSegment = data.customer;
+      const problemArea = data.problem;
+      const proposedSolution = data.solution;
+      
       return [
-        `[LOFA #1]: ${data.customer} are actively seeking solutions to ${data.problem.toLowerCase()}.`,
-        `[LOFA #2]: ${data.customer} are willing to adopt and pay for ${data.solution.toLowerCase()}.`,
-        `[LOFA #3]: ${data.solution} will effectively solve the core pain points better than existing alternatives.`
+        `[LOFA #1]: ${customerSegment} are actively experiencing ${problemArea.toLowerCase()} as a significant pain point that affects their daily operations.`,
+        `[LOFA #2]: ${customerSegment} are willing to pay for ${proposedSolution.toLowerCase()} and will prioritize it over existing alternatives.`,
+        `[LOFA #3]: ${proposedSolution} will deliver measurable value that ${customerSegment.toLowerCase()} can't achieve through current methods or competitors.`
       ];
     } else if (type === 'hypothesis') {
-      // Generate Respective Hypotheses
+      // Generate specific testable hypotheses
+      const customerSegment = data.customer;
+      const problemArea = data.problem;
+      const proposedSolution = data.solution;
+      
       return [
-        `Hypothesis 1: We believe that ${data.customer.toLowerCase()} will actively try new solutions if they reduce friction in ${data.problem.toLowerCase()}.`,
-        `Hypothesis 2: We believe that ${data.customer.toLowerCase()} will adopt ${data.solution.toLowerCase()} because it addresses their specific pain points more effectively than current alternatives.`,
-        `Hypothesis 3: We believe that ${data.customer.toLowerCase()} using ${data.solution.toLowerCase()} will see measurable improvements in their workflow because it reduces complexity and increases efficiency.`
+        `Hypothesis 1: We believe that ${customerSegment.toLowerCase()} will actively seek out ${proposedSolution.toLowerCase()} because ${problemArea.toLowerCase()} is costing them time and resources daily.`,
+        `Hypothesis 2: We believe that ${customerSegment.toLowerCase()} will choose our ${proposedSolution.toLowerCase()} over existing solutions because it addresses their specific pain points more directly.`,
+        `Hypothesis 3: We believe that ${customerSegment.toLowerCase()} will see improved outcomes within 30 days of using ${proposedSolution.toLowerCase()} because it eliminates the friction they currently experience with ${problemArea.toLowerCase()}.`
       ];
     } else {
-      // Default assumption analysis for other circles
+      // Assumption analysis - focus on validation aspects
       return [
-        `Analysis for ${type}: This component focuses on validating key aspects of your business model.`,
-        `Key insight: Understanding how this relates to your customer-problem-solution fit is crucial.`,
-        `Recommendation: Consider how this element can be measured and validated through customer feedback.`
+        `Key Validation Point: How do we verify that ${data.customer} actually experience ${data.problem.toLowerCase()} as frequently as we assume?`,
+        `Market Research Need: What evidence do we have that ${data.customer.toLowerCase()} are dissatisfied with current solutions?`,
+        `Behavioral Assumption: Will ${data.customer.toLowerCase()} actually change their current workflow to adopt ${data.solution.toLowerCase()}?`
       ];
     }
   };
