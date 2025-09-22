@@ -54,21 +54,21 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
       id: 'leap-of-faith',
       title: 'Leap of Faith',
       icon: Target,
-      position: 'top-1/4 left-1/4',
+      position: 'top-8 left-8',
       color: 'construction-yellow'
     },
     {
       id: 'assumption',
       title: 'Assumption',
       icon: Brain,
-      position: 'top-1/3 right-1/4',
+      position: 'top-8 right-8',
       color: 'construction-orange'
     },
     {
       id: 'hypothesis',
       title: 'Respective Hypothesis',
       icon: Lightbulb,
-      position: 'bottom-1/4 left-1/2 transform -translate-x-1/2',
+      position: 'bottom-8 left-1/2 transform -translate-x-1/2',
       color: 'construction-green'
     }
   ];
@@ -106,18 +106,50 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
           </div>
         </div>
 
-        {/* Interactive Circles */}
-        <div className="relative h-96 mb-12">
+        {/* Interactive Circles with Connecting Threads */}
+        <div className="relative h-[500px] mb-12">
+          {/* Connecting Threads */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
+            {/* Thread from Leap of Faith to Assumption */}
+            <line 
+              x1="25%" y1="25%" 
+              x2="75%" y2="25%" 
+              stroke="hsl(var(--muted-foreground))" 
+              strokeWidth="2" 
+              strokeDasharray="8,4"
+              className="opacity-40"
+            />
+            {/* Thread from Leap of Faith to Hypothesis */}
+            <line 
+              x1="25%" y1="25%" 
+              x2="50%" y2="85%" 
+              stroke="hsl(var(--muted-foreground))" 
+              strokeWidth="2" 
+              strokeDasharray="8,4"
+              className="opacity-40"
+            />
+            {/* Thread from Assumption to Hypothesis */}
+            <line 
+              x1="75%" y1="25%" 
+              x2="50%" y2="85%" 
+              stroke="hsl(var(--muted-foreground))" 
+              strokeWidth="2" 
+              strokeDasharray="8,4"
+              className="opacity-40"
+            />
+          </svg>
+          
           {circles.map((circle) => {
             const IconComponent = circle.icon;
             return (
               <button
                 key={circle.id}
                 onClick={() => handleCircleClick(circle.id)}
-                className={`absolute ${circle.position} w-36 h-36 rounded-full border-4 border-${circle.color} bg-background/80 backdrop-blur-sm hover:bg-${circle.color}/10 transition-all duration-300 hover:scale-105 flex flex-col items-center justify-center group shadow-lg animate-fade-in`}
+                className={`absolute ${circle.position} w-48 h-48 rounded-full border-4 border-${circle.color} bg-background/90 backdrop-blur-sm hover:bg-${circle.color}/10 transition-all duration-300 hover:scale-105 flex flex-col items-center justify-center group shadow-xl animate-fade-in`}
+                style={{ zIndex: 2 }}
               >
-                <IconComponent className={`w-12 h-12 text-${circle.color} mb-2`} />
-                <span className={`text-sm font-semibold text-${circle.color} text-center leading-tight`}>
+                <IconComponent className={`w-16 h-16 text-${circle.color} mb-3`} />
+                <span className={`text-base font-semibold text-${circle.color} text-center leading-tight px-2`}>
                   {circle.title}
                 </span>
               </button>
