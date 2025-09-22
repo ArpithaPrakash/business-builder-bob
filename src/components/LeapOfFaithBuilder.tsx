@@ -232,7 +232,6 @@ Generate 3 key validation questions that need to be answered:`;
             <div className="flex gap-2">
               <Input
                 type="password"
-                placeholder="sk-..."
                 value={apiKey}
                 onChange={(e) => setApiKey(e.target.value)}
                 className="flex-1"
