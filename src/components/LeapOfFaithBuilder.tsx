@@ -58,18 +58,18 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
       color: 'construction-yellow'
     },
     {
-      id: 'assumption',
-      title: 'Assumption',
-      icon: Brain,
-      position: 'top-8 right-8',
-      color: 'construction-orange'
-    },
-    {
       id: 'hypothesis',
       title: 'Respective Hypothesis',
       icon: Lightbulb,
-      position: 'bottom-20 left-1/2 transform -translate-x-1/2',
+      position: 'top-8 right-8',
       color: 'construction-green'
+    },
+    {
+      id: 'assumption',
+      title: 'Assumption',
+      icon: Brain,
+      position: 'bottom-20 left-1/2 transform -translate-x-1/2',
+      color: 'construction-orange'
     }
   ];
 
