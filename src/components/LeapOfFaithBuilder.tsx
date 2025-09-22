@@ -304,7 +304,7 @@ Generate 3 key validation questions that need to be answered:`;
                   <p className="text-muted-foreground mb-4">
                     I'm converting each Leap of Faith Assumption into a clear, falsifiable hypothesis using the format: "We believe that [customer segment] will [specific behavior] because [reason or pain point]."
                   </p>
-                  {leapOfFaithResults.length === 0 && (
+                  {(leapOfFaithResults?.length ?? 0) === 0 && (
                     <p className="text-yellow-600 mb-4 font-medium">
                       ⚠️ Please click on "Leap of Faith" first to generate assumptions before creating hypotheses.
                     </p>
@@ -328,7 +328,7 @@ Generate 3 key validation questions that need to be answered:`;
                   {selectedCircle === 'assumption' && '📋 Testable Hypotheses Generated:'}
                 </h4>
                 <div className="space-y-3">
-                  {analysis.assumptions.map((assumption, index) => (
+                  {(analysis.assumptions || []).map((assumption, index) => (
                     <div key={index} className="bg-muted/50 p-3 rounded-lg">
                       <p className="text-foreground">{assumption}</p>
                     </div>
