@@ -157,25 +157,18 @@ Generate 3 key validation questions that need to be answered:`;
 
   const circles = [
     {
-      id: 'leap-of-faith',
-      title: 'Leap of Faith',
-      icon: Target,
-      position: 'top-8 left-8',
-      color: 'construction-yellow'
+      id: 'assumption',
+      title: 'Leap of Faith Assumptions',
+      icon: Brain,
+      position: 'top-1/2 left-1/4 transform -translate-x-1/2 -translate-y-1/2',
+      color: 'construction-orange'
     },
     {
       id: 'hypothesis',
       title: 'Respective Hypothesis',
       icon: Lightbulb,
-      position: 'top-8 right-8',
+      position: 'top-1/2 right-1/4 transform translate-x-1/2 -translate-y-1/2',
       color: 'construction-green'
-    },
-    {
-      id: 'assumption',
-      title: 'Assumption',
-      icon: Brain,
-      position: 'bottom-20 left-1/2 transform -translate-x-1/2',
-      color: 'construction-orange'
     }
   ];
 
