@@ -4,12 +4,14 @@ import VideoIntroPage from '@/components/VideoIntroPage';
 import CPSHypothesisBuilder from '@/components/CPSHypothesisBuilder';
 import ImageGenerator from '@/components/ImageGenerator';
 import LeapOfFaithBuilder from '@/components/LeapOfFaithBuilder';
+import MomTestBuilder from '@/components/MomTestBuilder';
 
 const Index = () => {
   const [currentIdea, setCurrentIdea] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState<'hero' | 'video' | 'cps' | 'image-gen' | 'lofa'>('hero');
+  const [currentStep, setCurrentStep] = useState<'hero' | 'video' | 'cps' | 'image-gen' | 'lofa' | 'mom-test'>('hero');
   const [cpsData, setCpsData] = useState<any>(null);
+  const [lofaData, setLofaData] = useState<string[]>([]);
 
   const handleIdeaSubmit = async (idea: string) => {
     setIsLoading(true);
@@ -54,9 +56,18 @@ const Index = () => {
     setCurrentStep('image-gen');
   };
 
-  const handleLOFANext = () => {
-    // Will implement next phase later
-    console.log("Moving to next phase with data:", cpsData);
+  const handleLOFANext = (lofaAssumptions: string[]) => {
+    setLofaData(lofaAssumptions);
+    setCurrentStep('mom-test');
+  };
+
+  const handleBackToLOFA = () => {
+    setCurrentStep('lofa');
+  };
+
+  const handleMomTestComplete = () => {
+    // Will implement final completion later
+    console.log("Validation journey complete!", { cpsData, lofaData });
   };
 
   return (
@@ -94,6 +105,16 @@ const Index = () => {
           cpsData={cpsData}
           onBack={handleBackToImageGen}
           onNext={handleLOFANext}
+        />
+      )}
+      
+      {currentStep === 'mom-test' && currentIdea && cpsData && lofaData.length > 0 && (
+        <MomTestBuilder
+          lofaData={lofaData}
+          businessIdea={currentIdea}
+          cpsData={cpsData}
+          onBack={handleBackToLOFA}
+          onComplete={handleMomTestComplete}
         />
       )}
     </div>

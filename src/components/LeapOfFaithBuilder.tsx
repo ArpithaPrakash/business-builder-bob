@@ -10,7 +10,7 @@ interface LeapOfFaithBuilderProps {
     solution: string;
   };
   onBack: () => void;
-  onNext: () => void;
+  onNext: (lofaAssumptions: string[]) => void;
 }
 
 interface AssumptionAnalysis {
@@ -343,7 +343,7 @@ Generate 3 key validation questions that need to be answered:`;
           </div>
 
           <Button 
-            onClick={onNext}
+            onClick={() => onNext(leapOfFaithResults)}
             className="bg-primary hover:bg-primary/90"
           >
             Next Step
