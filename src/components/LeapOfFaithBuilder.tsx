@@ -172,7 +172,7 @@ Generate 3 key validation questions that need to be answered:`;
     },
     {
       id: 'assumption',
-      title: 'Respective Hypothesis',
+      title: 'Assumption',
       icon: Brain,
       position: 'bottom-20 left-1/2 transform -translate-x-1/2',
       color: 'construction-orange'
