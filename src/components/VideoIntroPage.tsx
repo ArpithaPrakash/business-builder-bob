@@ -1,5 +1,6 @@
 import { Button } from '@/components/ui/button';
 import { Play } from 'lucide-react';
+import { generateBusinessName } from '@/utils/businessNameGenerator';
 
 interface VideoIntroPageProps {
   businessIdea: string;
@@ -8,20 +9,22 @@ interface VideoIntroPageProps {
 }
 
 const VideoIntroPage = ({ businessIdea, onBack, onStartBuilding }: VideoIntroPageProps) => {
+  const businessName = generateBusinessName(businessIdea);
+  
   return (
     <div className="min-h-screen blueprint-bg p-6">
       <div className="max-w-4xl mx-auto">
         {/* Title Section */}
         <div className="text-center mb-8">
           <h1 className="text-5xl font-black text-primary mb-4">
-            Awesome! Let's build {businessIdea}
+            Awesome! Let's build {businessName}
           </h1>
         </div>
 
         {/* Subtitle Section */}
         <div className="text-center mb-12">
           <p className="text-xl text-muted-foreground">
-            Please watch the following one-minute video to learn about the {businessIdea}.
+            Please watch the following one-minute video to learn about {businessName}.
           </p>
         </div>
 
