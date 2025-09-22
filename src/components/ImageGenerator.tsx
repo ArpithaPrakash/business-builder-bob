@@ -62,97 +62,309 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
   };
 
   const generateConceptVisualization = (ctx: CanvasRenderingContext2D, idea: string, data: CPSData) => {
-    // Clear canvas
-    ctx.fillStyle = '#f8fafc';
+    // Clear canvas with professional gradient background
+    const bgGradient = ctx.createLinearGradient(0, 0, 512, 512);
+    bgGradient.addColorStop(0, '#f8fafc');
+    bgGradient.addColorStop(1, '#e2e8f0');
+    ctx.fillStyle = bgGradient;
     ctx.fillRect(0, 0, 512, 512);
     
-    // Create a hash from the business idea for consistent randomization
-    const hash = idea.split('').reduce((a, b) => {
-      a = ((a << 5) - a) + b.charCodeAt(0);
-      return a & a;
-    }, 0);
+    // Analyze business type from all inputs
+    const allText = `${idea} ${data.customer} ${data.problem} ${data.solution}`.toLowerCase();
     
-    const rand1 = Math.abs(hash) % 100 / 100;
-    const rand2 = Math.abs(hash * 2) % 100 / 100;
-    const rand3 = Math.abs(hash * 3) % 100 / 100;
+    // Enhanced business categorization
+    let businessType = 'general';
+    let primaryColor = '#3b82f6';
+    let secondaryColor = '#8b5cf6';
+    let accentColor = '#10b981';
+    let icon = '🏢';
     
-    // Color scheme based on business type keywords
-    const colors = {
-      tech: ['#3b82f6', '#8b5cf6', '#06b6d4'],
-      business: ['#f59e0b', '#10b981', '#ef4444'],
-      service: ['#8b5cf6', '#ec4899', '#f59e0b'],
-      health: ['#10b981', '#06b6d4', '#8b5cf6'],
-      education: ['#f59e0b', '#3b82f6', '#10b981']
-    };
+    if (allText.includes('tech') || allText.includes('app') || allText.includes('software') || allText.includes('digital') || allText.includes('platform')) {
+      businessType = 'tech';
+      primaryColor = '#3b82f6';
+      secondaryColor = '#8b5cf6';
+      accentColor = '#06b6d4';
+      icon = '💻';
+    } else if (allText.includes('health') || allText.includes('medical') || allText.includes('wellness') || allText.includes('fitness')) {
+      businessType = 'health';
+      primaryColor = '#10b981';
+      secondaryColor = '#06b6d4';
+      accentColor = '#8b5cf6';
+      icon = '🏥';
+    } else if (allText.includes('education') || allText.includes('learn') || allText.includes('course') || allText.includes('training')) {
+      businessType = 'education';
+      primaryColor = '#f59e0b';
+      secondaryColor = '#3b82f6';
+      accentColor = '#10b981';
+      icon = '📚';
+    } else if (allText.includes('food') || allText.includes('restaurant') || allText.includes('delivery') || allText.includes('cook')) {
+      businessType = 'food';
+      primaryColor = '#ef4444';
+      secondaryColor = '#f59e0b';
+      accentColor = '#10b981';
+      icon = '🍽️';
+    } else if (allText.includes('finance') || allText.includes('money') || allText.includes('payment') || allText.includes('bank')) {
+      businessType = 'finance';
+      primaryColor = '#059669';
+      secondaryColor = '#0d9488';
+      accentColor = '#f59e0b';
+      icon = '💰';
+    } else if (allText.includes('retail') || allText.includes('shop') || allText.includes('store') || allText.includes('ecommerce')) {
+      businessType = 'retail';
+      primaryColor = '#ec4899';
+      secondaryColor = '#8b5cf6';
+      accentColor = '#f59e0b';
+      icon = '🛍️';
+    }
+
+    // Draw sophisticated business model visualization
     
-    let colorPalette = colors.business; // default
-    const lowerIdea = idea.toLowerCase();
-    if (lowerIdea.includes('tech') || lowerIdea.includes('app') || lowerIdea.includes('software')) {
-      colorPalette = colors.tech;
-    } else if (lowerIdea.includes('health') || lowerIdea.includes('medical')) {
-      colorPalette = colors.health;
-    } else if (lowerIdea.includes('education') || lowerIdea.includes('learn')) {
-      colorPalette = colors.education;
-    } else if (lowerIdea.includes('service')) {
-      colorPalette = colors.service;
+    // 1. Customer segment (left side)
+    drawCustomerSegment(ctx, data.customer, primaryColor, 80, 150);
+    
+    // 2. Problem visualization (top center)
+    drawProblemVisualization(ctx, data.problem, secondaryColor, 256, 80);
+    
+    // 3. Solution (center)
+    drawSolutionCore(ctx, data.solution, primaryColor, 256, 200, icon);
+    
+    // 4. Value flow arrows
+    drawValueFlows(ctx, accentColor);
+    
+    // 5. Market opportunity indicators
+    drawMarketIndicators(ctx, businessType, primaryColor, secondaryColor);
+    
+    // 6. Professional labels and title
+    drawProfessionalLabels(ctx, idea, businessType);
+  };
+
+  const drawCustomerSegment = (ctx: CanvasRenderingContext2D, customer: string, color: string, x: number, y: number) => {
+    // Customer group visualization
+    ctx.fillStyle = color + '20';
+    ctx.fillRect(20, y - 40, 120, 80);
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(20, y - 40, 120, 80);
+    
+    // Customer icons
+    ctx.fillStyle = color;
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 2; j++) {
+        ctx.beginPath();
+        ctx.arc(40 + i * 30, y - 20 + j * 20, 8, 0, 2 * Math.PI);
+        ctx.fill();
+      }
     }
     
-    // Draw abstract geometric shapes representing the business concept
+    // Label
+    ctx.fillStyle = '#1f2937';
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('TARGET CUSTOMERS', 80, y + 55);
     
-    // Background gradient
-    const gradient = ctx.createLinearGradient(0, 0, 512, 512);
-    gradient.addColorStop(0, colorPalette[0] + '20');
-    gradient.addColorStop(1, colorPalette[1] + '20');
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, 512, 512);
+    // Customer description (truncated)
+    ctx.font = '10px Arial';
+    ctx.fillStyle = '#6b7280';
+    const words = customer.split(' ').slice(0, 8).join(' ');
+    const truncated = words.length > 30 ? words.substring(0, 27) + '...' : words;
     
-    // Main central element (representing the core business)
-    ctx.fillStyle = colorPalette[0];
+    const lines = wrapText(ctx, truncated, 100);
+    lines.slice(0, 2).forEach((line, i) => {
+      ctx.fillText(line, 80, y + 70 + i * 12);
+    });
+  };
+
+  const drawProblemVisualization = (ctx: CanvasRenderingContext2D, problem: string, color: string, x: number, y: number) => {
+    // Problem cloud/barrier
+    ctx.fillStyle = color + '30';
     ctx.beginPath();
-    ctx.arc(256, 200, 60 + rand1 * 40, 0, 2 * Math.PI);
+    ctx.ellipse(x, y, 80, 40, 0, 0, 2 * Math.PI);
     ctx.fill();
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 2;
+    ctx.stroke();
     
-    // Connected elements (representing customers, solutions, etc.)
-    for (let i = 0; i < 5; i++) {
-      const angle = (i / 5) * 2 * Math.PI + rand2 * Math.PI;
-      const x = 256 + Math.cos(angle) * (120 + rand3 * 60);
-      const y = 200 + Math.sin(angle) * (80 + rand1 * 40);
-      const size = 20 + rand2 * 25;
-      
-      ctx.fillStyle = colorPalette[(i + 1) % colorPalette.length] + '80';
+    // Problem indicators (jagged lines for pain points)
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    for (let i = 0; i < 4; i++) {
+      const startX = x - 60 + i * 30;
       ctx.beginPath();
-      ctx.arc(x, y, size, 0, 2 * Math.PI);
-      ctx.fill();
-      
-      // Connection lines
-      ctx.strokeStyle = colorPalette[0] + '40';
-      ctx.lineWidth = 2;
-      ctx.beginPath();
-      ctx.moveTo(256, 200);
-      ctx.lineTo(x, y);
+      ctx.moveTo(startX, y - 10);
+      ctx.lineTo(startX + 10, y + 5);
+      ctx.lineTo(startX + 20, y - 5);
       ctx.stroke();
     }
     
-    // Add text overlay
+    // Label
     ctx.fillStyle = '#1f2937';
+    ctx.font = 'bold 12px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('PROBLEM', x, y - 55);
+  };
+
+  const drawSolutionCore = (ctx: CanvasRenderingContext2D, solution: string, color: string, x: number, y: number, icon: string) => {
+    // Main solution hexagon
+    ctx.fillStyle = color;
+    drawHexagon(ctx, x, y, 50);
+    ctx.fill();
+    
+    // Inner solution details
+    ctx.fillStyle = 'white';
+    drawHexagon(ctx, x, y, 40);
+    ctx.fill();
+    
+    // Solution icon/symbol
+    ctx.fillStyle = color;
     ctx.font = 'bold 24px Arial';
     ctx.textAlign = 'center';
-    ctx.fillText('Business Concept', 256, 350);
+    ctx.fillText('💡', x, y + 8);
     
-    ctx.font = '16px Arial';
+    // Solution label
+    ctx.fillStyle = '#1f2937';
+    ctx.font = 'bold 14px Arial';
+    ctx.fillText('SOLUTION', x, y + 80);
+    
+    // Solution description
+    ctx.font = '10px Arial';
     ctx.fillStyle = '#6b7280';
-    const truncatedIdea = idea.length > 40 ? idea.substring(0, 37) + '...' : idea;
-    ctx.fillText(truncatedIdea, 256, 380);
+    const words = solution.split(' ').slice(0, 10).join(' ');
+    const truncated = words.length > 40 ? words.substring(0, 37) + '...' : words;
     
-    // Add decorative elements
-    ctx.fillStyle = colorPalette[2] + '60';
-    for (let i = 0; i < 8; i++) {
-      const x = rand1 * 512;
-      const y = rand2 * 512;
-      ctx.beginPath();
-      ctx.arc(x, y, 3 + rand3 * 5, 0, 2 * Math.PI);
-      ctx.fill();
+    const lines = wrapText(ctx, truncated, 120);
+    lines.slice(0, 2).forEach((line, i) => {
+      ctx.fillText(line, x, y + 95 + i * 12);
+    });
+  };
+
+  const drawValueFlows = (ctx: CanvasRenderingContext2D, color: string) => {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = 3;
+    
+    // Arrow from customer to solution
+    drawArrow(ctx, 140, 150, 206, 180);
+    
+    // Arrow from problem to solution
+    drawArrow(ctx, 256, 120, 256, 150);
+    
+    // Success indicators from solution
+    ctx.strokeStyle = color + '80';
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 3; i++) {
+      const angle = (i * 60 - 30) * Math.PI / 180;
+      const endX = 256 + Math.cos(angle) * 80;
+      const endY = 200 + Math.sin(angle) * 80;
+      drawArrow(ctx, 256, 200, endX, endY);
     }
+  };
+
+  const drawMarketIndicators = (ctx: CanvasRenderingContext2D, businessType: string, primaryColor: string, secondaryColor: string) => {
+    // Market size indicator (bottom right)
+    ctx.fillStyle = secondaryColor + '20';
+    ctx.fillRect(380, 350, 110, 60);
+    ctx.strokeStyle = secondaryColor;
+    ctx.lineWidth = 2;
+    ctx.strokeRect(380, 350, 110, 60);
+    
+    // Growth chart bars
+    ctx.fillStyle = secondaryColor;
+    const heights = [15, 25, 35, 30];
+    heights.forEach((height, i) => {
+      ctx.fillRect(390 + i * 20, 390 - height, 15, height);
+    });
+    
+    ctx.fillStyle = '#1f2937';
+    ctx.font = 'bold 10px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('MARKET', 435, 425);
+    ctx.fillText('OPPORTUNITY', 435, 437);
+    
+    // ROI indicator (bottom left)
+    ctx.fillStyle = primaryColor + '20';
+    ctx.beginPath();
+    ctx.arc(60, 380, 35, 0, 2 * Math.PI);
+    ctx.fill();
+    ctx.strokeStyle = primaryColor;
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    
+    ctx.fillStyle = primaryColor;
+    ctx.font = 'bold 16px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('ROI', 60, 385);
+    
+    ctx.font = 'bold 10px Arial';
+    ctx.fillText('POTENTIAL', 60, 430);
+  };
+
+  const drawProfessionalLabels = (ctx: CanvasRenderingContext2D, idea: string, businessType: string) => {
+    // Main title
+    ctx.fillStyle = '#1f2937';
+    ctx.font = 'bold 20px Arial';
+    ctx.textAlign = 'center';
+    ctx.fillText('BUSINESS MODEL CANVAS', 256, 30);
+    
+    // Business idea subtitle
+    ctx.font = '14px Arial';
+    ctx.fillStyle = '#6b7280';
+    const truncatedIdea = idea.length > 50 ? idea.substring(0, 47) + '...' : idea;
+    ctx.fillText(truncatedIdea, 256, 50);
+    
+    // Business type badge
+    ctx.fillStyle = '#3b82f6';
+    ctx.fillRect(200, 470, 112, 25);
+    ctx.fillStyle = 'white';
+    ctx.font = 'bold 12px Arial';
+    ctx.fillText(businessType.toUpperCase() + ' SECTOR', 256, 487);
+  };
+
+  const drawHexagon = (ctx: CanvasRenderingContext2D, x: number, y: number, radius: number) => {
+    ctx.beginPath();
+    for (let i = 0; i < 6; i++) {
+      const angle = (i * 60) * Math.PI / 180;
+      const hx = x + radius * Math.cos(angle);
+      const hy = y + radius * Math.sin(angle);
+      if (i === 0) ctx.moveTo(hx, hy);
+      else ctx.lineTo(hx, hy);
+    }
+    ctx.closePath();
+  };
+
+  const drawArrow = (ctx: CanvasRenderingContext2D, fromX: number, fromY: number, toX: number, toY: number) => {
+    const headLength = 10;
+    const angle = Math.atan2(toY - fromY, toX - fromX);
+    
+    ctx.beginPath();
+    ctx.moveTo(fromX, fromY);
+    ctx.lineTo(toX, toY);
+    ctx.lineTo(toX - headLength * Math.cos(angle - Math.PI / 6), toY - headLength * Math.sin(angle - Math.PI / 6));
+    ctx.moveTo(toX, toY);
+    ctx.lineTo(toX - headLength * Math.cos(angle + Math.PI / 6), toY - headLength * Math.sin(angle + Math.PI / 6));
+    ctx.stroke();
+  };
+
+  const wrapText = (ctx: CanvasRenderingContext2D, text: string, maxWidth: number): string[] => {
+    const words = text.split(' ');
+    const lines: string[] = [];
+    let currentLine = '';
+    
+    for (const word of words) {
+      const testLine = currentLine + (currentLine ? ' ' : '') + word;
+      const metrics = ctx.measureText(testLine);
+      
+      if (metrics.width > maxWidth && currentLine) {
+        lines.push(currentLine);
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+    
+    if (currentLine) {
+      lines.push(currentLine);
+    }
+    
+    return lines;
   };
 
   const downloadImage = () => {
