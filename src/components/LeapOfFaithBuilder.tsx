@@ -267,10 +267,15 @@ Generate 3 key validation questions that need to be answered:`;
 
         {/* AI Analysis Section */}
         {selectedCircle && (
-        <div className="bg-card/80 backdrop-blur-sm rounded-lg p-6 mb-8 border shadow-lg">
-            <div className="flex items-center gap-2 mb-4">
-              <Brain className="w-6 h-6 text-primary" />
-              <h3 className="text-xl font-bold">Analysis</h3>
+        <div className="bg-gradient-to-br from-card/90 to-background/80 backdrop-blur-sm rounded-xl p-6 mb-8 border-2 border-construction-yellow/30 shadow-construction animate-fade-in">
+            <div className="flex items-center gap-3 mb-6">
+              <div className="w-10 h-10 bg-construction-yellow rounded-full flex items-center justify-center">
+                <Brain className="w-6 h-6 text-white" />
+              </div>
+              <div>
+                <h3 className="text-2xl font-bold text-foreground">Analysis</h3>
+                <p className="text-sm text-construction-orange font-medium">🚧 Building your business insights...</p>
+              </div>
             </div>
             
             <div className="mb-6">
@@ -290,10 +295,15 @@ Generate 3 key validation questions that need to be answered:`;
               </div>
             ) : analysis.assumptions && analysis.assumptions.length > 0 ? (
               <div>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {(analysis.assumptions || []).map((assumption, index) => (
-                    <div key={index} className="bg-muted/50 p-3 rounded-lg">
-                      <p className="text-foreground">{assumption}</p>
+                    <div key={index} className="bg-gradient-to-r from-construction-yellow/10 to-construction-orange/10 border-l-4 border-construction-yellow p-4 rounded-lg shadow-sm hover:shadow-md transition-shadow">
+                      <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 bg-construction-yellow rounded-full flex items-center justify-center text-white font-bold text-sm">
+                          {index + 1}
+                        </div>
+                        <p className="text-foreground font-medium leading-relaxed">{assumption}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
