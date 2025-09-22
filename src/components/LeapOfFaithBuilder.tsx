@@ -274,7 +274,11 @@ Generate 3 key validation questions that need to be answered:`;
               <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
                 selectedCircle === 'assumption' ? 'bg-construction-orange' : 'bg-construction-green'
               }`}>
-                <Brain className="w-6 h-6 text-white" />
+                {selectedCircle === 'assumption' ? (
+                  <Brain className="w-6 h-6 text-white" />
+                ) : (
+                  <Lightbulb className="w-6 h-6 text-white" />
+                )}
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-foreground">Analysis</h3>
