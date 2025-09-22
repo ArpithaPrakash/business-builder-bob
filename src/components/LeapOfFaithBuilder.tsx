@@ -107,52 +107,52 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
         </div>
 
         {/* Interactive Circles with Connecting Threads */}
-<div className="relative h-[500px] mb-12">
+        <div className="relative h-[500px] mb-12">
           {/* Fun Thread-like Connectors */}
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" style={{ zIndex: 1 }}>
-            {/* Thread from Leap of Faith to Assumption */}
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 500" style={{ zIndex: 1 }}>
+            {/* Thread from Leap of Faith to Assumption - curved upward */}
             <path 
-              d="M 25% 25% Q 50% 10% 75% 25%" 
+              d="M 200 125 Q 400 50 600 125" 
               stroke="hsl(var(--construction-yellow))" 
-              strokeWidth="3" 
+              strokeWidth="4" 
               fill="none"
-              className="opacity-60"
+              className="opacity-70"
               style={{
-                filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.2))',
+                filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))',
                 strokeLinecap: 'round'
               }}
             />
-            {/* Thread from Leap of Faith to Hypothesis */}
+            {/* Thread from Leap of Faith to Hypothesis - curved left */}
             <path 
-              d="M 25% 25% Q 20% 55% 50% 85%" 
+              d="M 200 125 Q 150 275 400 425" 
               stroke="hsl(var(--construction-yellow))" 
-              strokeWidth="3" 
+              strokeWidth="4" 
               fill="none"
-              className="opacity-60"
+              className="opacity-70"
               style={{
-                filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.2))',
+                filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))',
                 strokeLinecap: 'round'
               }}
             />
-            {/* Thread from Assumption to Hypothesis */}
+            {/* Thread from Assumption to Hypothesis - curved right */}
             <path 
-              d="M 75% 25% Q 80% 55% 50% 85%" 
+              d="M 600 125 Q 650 275 400 425" 
               stroke="hsl(var(--construction-orange))" 
-              strokeWidth="3" 
+              strokeWidth="4" 
               fill="none"
-              className="opacity-60"
+              className="opacity-70"
               style={{
-                filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.2))',
+                filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))',
                 strokeLinecap: 'round'
               }}
             />
             
-            {/* Fun thread texture overlay */}
+            {/* Add some fiber texture to threads */}
             <defs>
-              <pattern id="threadTexture" patternUnits="userSpaceOnUse" width="8" height="2">
-                <rect width="8" height="2" fill="rgba(255,255,255,0.1)"/>
-                <rect width="4" height="1" fill="rgba(255,255,255,0.2)"/>
-              </pattern>
+              <filter id="fiberTexture">
+                <feTurbulence baseFrequency="0.9" numOctaves="3" result="turbulence"/>
+                <feDisplacementMap in="SourceGraphic" in2="turbulence" scale="2"/>
+              </filter>
             </defs>
           </svg>
           
