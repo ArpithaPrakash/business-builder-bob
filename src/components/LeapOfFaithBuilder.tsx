@@ -278,39 +278,22 @@ Generate 3 key validation questions that need to be answered:`;
             </div>
             
             <div className="mb-6">
-              {selectedCircle === 'leap-of-faith' && (
+              {selectedCircle === 'assumption' && (
                 <div>
-                  <p className="text-muted-foreground mb-4">
-                    <strong>Goal:</strong> Identify the most critical Leap of Faith Assumptions (LOFAs) that underpin your CPS logic, focusing on those that could cause the business to fail if proven false.
-                  </p>
-                  <p className="text-muted-foreground mb-4">
-                    As an expert in hypothesis-driven entrepreneurship with deep understanding of Eric Ries' Lean Startup methodology, I specialize in helping early-stage founders break down their business ideas into testable assumptions.
-                  </p>
+                  <h4 className="text-lg font-semibold text-foreground mb-2">
+                    Leap of Faith Assumptions
+                  </h4>
                 </div>
               )}
               
               {selectedCircle === 'hypothesis' && (
                 <div>
-                  <p className="text-muted-foreground mb-4">
-                    <strong>Task:</strong> Convert high-level assumptions (Leap of Faith Assumptions) into specific, testable hypotheses that can guide customer discovery interviews and experiments.
-                  </p>
-                  <p className="text-muted-foreground mb-4">
-                    I'm converting each assumption into a clear, falsifiable hypothesis using the format: "We believe that [customer segment] will [specific behavior] because [reason or pain point]."
-                  </p>
-                </div>
-              )}
-              
-              {selectedCircle === 'assumption' && (
-                <div>
-                  <p className="text-muted-foreground mb-4">
-                    <strong>Task:</strong> Convert high-level assumptions (Leap of Faith Assumptions) into specific, testable hypotheses that can guide customer discovery interviews and experiments.
-                  </p>
-                  <p className="text-muted-foreground mb-4">
-                    I'm converting each Leap of Faith Assumption into a clear, falsifiable hypothesis using the format: "We believe that [customer segment] will [specific behavior] because [reason or pain point]."
-                  </p>
+                  <h4 className="text-lg font-semibold text-foreground mb-2">
+                    Testable Hypotheses
+                  </h4>
                   {(leapOfFaithResults?.length ?? 0) === 0 && (
                     <p className="text-yellow-600 mb-4 font-medium">
-                      ⚠️ Please click on "Leap of Faith" first to generate assumptions before creating hypotheses.
+                      ⚠️ Please click on "Leap of Faith Assumptions" first to generate assumptions before creating hypotheses.
                     </p>
                   )}
                 </div>
@@ -327,9 +310,8 @@ Generate 3 key validation questions that need to be answered:`;
             ) : analysis.assumptions && analysis.assumptions.length > 0 ? (
               <div>
                 <h4 className="text-lg font-semibold mb-4">
-                  {selectedCircle === 'leap-of-faith' && '🧠 Leap of Faith Assumptions Identified:'}
-                  {selectedCircle === 'hypothesis' && '📋 Testable Hypotheses Generated:'}
-                  {selectedCircle === 'assumption' && '📋 Testable Hypotheses Generated:'}
+                  {selectedCircle === 'assumption' && 'Leap of Faith Assumptions:'}
+                  {selectedCircle === 'hypothesis' && 'Testable Hypotheses:'}
                 </h4>
                 <div className="space-y-3">
                   {(analysis.assumptions || []).map((assumption, index) => (
