@@ -282,7 +282,7 @@ Generate 3 key validation questions that need to be answered:`;
               </div>
               <div>
                 <h3 className="text-2xl font-bold text-foreground">Analysis</h3>
-                <p className="text-sm text-construction-orange font-medium">🚧 Building your business insights...</p>
+                <p className="text-sm text-construction-orange font-medium">🚧 Business Insights under construction...</p>
               </div>
             </div>
             
