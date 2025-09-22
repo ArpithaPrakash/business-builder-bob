@@ -68,7 +68,7 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
       id: 'hypothesis',
       title: 'Respective Hypothesis',
       icon: Lightbulb,
-      position: 'bottom-8 left-1/2 transform -translate-x-1/2',
+      position: 'bottom-20 left-1/2 transform -translate-x-1/2',
       color: 'construction-green'
     }
   ];
@@ -110,9 +110,9 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
         <div className="relative h-[500px] mb-12">
           {/* Fun Thread-like Connectors */}
           <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 500" style={{ zIndex: 1 }}>
-            {/* Thread from Leap of Faith to Assumption - curved upward */}
+            {/* Thread from Leap of Faith to Respective Hypothesis */}
             <path 
-              d="M 200 125 Q 400 50 600 125" 
+              d="M 200 125 Q 250 250 400 375" 
               stroke="hsl(var(--construction-yellow))" 
               strokeWidth="4" 
               fill="none"
@@ -122,22 +122,10 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
                 strokeLinecap: 'round'
               }}
             />
-            {/* Thread from Leap of Faith to Hypothesis - curved left */}
+            {/* Thread from Respective Hypothesis to Assumption */}
             <path 
-              d="M 200 125 Q 150 275 400 425" 
-              stroke="hsl(var(--construction-yellow))" 
-              strokeWidth="4" 
-              fill="none"
-              className="opacity-70"
-              style={{
-                filter: 'drop-shadow(2px 2px 4px rgba(0,0,0,0.3))',
-                strokeLinecap: 'round'
-              }}
-            />
-            {/* Thread from Assumption to Hypothesis - curved right */}
-            <path 
-              d="M 600 125 Q 650 275 400 425" 
-              stroke="hsl(var(--construction-orange))" 
+              d="M 400 375 Q 550 250 600 125" 
+              stroke="hsl(var(--construction-green))" 
               strokeWidth="4" 
               fill="none"
               className="opacity-70"
