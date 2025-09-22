@@ -270,7 +270,7 @@ Generate 3 key validation questions that need to be answered:`;
         <div className="bg-card/80 backdrop-blur-sm rounded-lg p-6 mb-8 border shadow-lg">
             <div className="flex items-center gap-2 mb-4">
               <Brain className="w-6 h-6 text-primary" />
-              <h3 className="text-xl font-bold">AI Analysis Results</h3>
+              <h3 className="text-xl font-bold">Analysis</h3>
             </div>
             
             <div className="mb-6">
