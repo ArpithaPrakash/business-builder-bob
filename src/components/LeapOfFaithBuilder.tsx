@@ -242,7 +242,7 @@ Generate 3 key validation questions that need to be answered:`;
               <button
                 key={circle.id}
                 onClick={() => handleCircleClick(circle.id)}
-                className={`absolute ${circle.position} w-48 h-48 rounded-full border-4 ${
+                className={`absolute ${circle.position} w-56 h-56 rounded-full border-4 ${
                   circle.id === 'assumption' ? 'border-construction-orange text-construction-orange' : 
                   'border-construction-green text-construction-green'
                 } bg-background/90 backdrop-blur-sm hover:bg-opacity-10 transition-all duration-300 hover:scale-105 active:scale-95 flex flex-col items-center justify-center group shadow-xl animate-fade-in`}
