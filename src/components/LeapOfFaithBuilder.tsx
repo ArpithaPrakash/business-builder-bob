@@ -112,7 +112,7 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
           <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 500" style={{ zIndex: 1 }}>
             {/* Thread from Leap of Faith to Respective Hypothesis */}
             <path 
-              d="M 200 125 Q 250 250 400 375" 
+              d="M 268 193 Q 300 280 332 307" 
               stroke="hsl(var(--construction-yellow))" 
               strokeWidth="4" 
               fill="none"
@@ -124,7 +124,7 @@ const LeapOfFaithBuilder = ({ cpsData, onBack, onNext }: LeapOfFaithBuilderProps
             />
             {/* Thread from Respective Hypothesis to Assumption */}
             <path 
-              d="M 400 375 Q 550 250 600 125" 
+              d="M 468 307 Q 500 280 532 193" 
               stroke="hsl(var(--construction-green))" 
               strokeWidth="4" 
               fill="none"
