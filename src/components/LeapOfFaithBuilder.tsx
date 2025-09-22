@@ -242,11 +242,14 @@ Generate 3 key validation questions that need to be answered:`;
               <button
                 key={circle.id}
                 onClick={() => handleCircleClick(circle.id)}
-                className={`absolute ${circle.position} w-48 h-48 rounded-full border-4 border-${circle.color} bg-background/90 backdrop-blur-sm hover:bg-${circle.color}/10 transition-all duration-300 hover:scale-105 active:scale-95 flex flex-col items-center justify-center group shadow-xl animate-fade-in`}
+                className={`absolute ${circle.position} w-48 h-48 rounded-full border-4 ${
+                  circle.id === 'assumption' ? 'border-construction-orange text-construction-orange' : 
+                  'border-construction-green text-construction-green'
+                } bg-background/90 backdrop-blur-sm hover:bg-opacity-10 transition-all duration-300 hover:scale-105 active:scale-95 flex flex-col items-center justify-center group shadow-xl animate-fade-in`}
                 style={{ zIndex: 2 }}
               >
-                <IconComponent className={`w-16 h-16 text-${circle.color} mb-3`} />
-                <span className={`text-base font-semibold text-${circle.color} text-center leading-tight px-2`}>
+                <IconComponent className="w-16 h-16 mb-3" />
+                <span className="text-base font-semibold text-center leading-tight px-2">
                   {circle.title}
                 </span>
               </button>
