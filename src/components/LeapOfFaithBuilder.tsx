@@ -267,9 +267,13 @@ Generate 3 key validation questions that need to be answered:`;
 
         {/* AI Analysis Section */}
         {selectedCircle && (
-        <div className="bg-gradient-to-br from-card/90 to-background/80 backdrop-blur-sm rounded-xl p-6 mb-8 border-2 border-construction-yellow/30 shadow-construction animate-fade-in">
+        <div className={`bg-gradient-to-br from-card/90 to-background/80 backdrop-blur-sm rounded-xl p-6 mb-8 border-2 ${
+          selectedCircle === 'assumption' ? 'border-construction-orange/60' : 'border-construction-green/60'
+        } shadow-construction animate-fade-in`}>
             <div className="flex items-center gap-3 mb-6">
-              <div className="w-10 h-10 bg-construction-yellow rounded-full flex items-center justify-center">
+              <div className={`w-10 h-10 rounded-full flex items-center justify-center ${
+                selectedCircle === 'assumption' ? 'bg-construction-orange' : 'bg-construction-green'
+              }`}>
                 <Brain className="w-6 h-6 text-white" />
               </div>
               <div>
