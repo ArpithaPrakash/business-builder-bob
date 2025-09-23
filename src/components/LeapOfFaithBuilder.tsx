@@ -164,7 +164,7 @@ Generate 3 key validation questions that need to be answered:`;
     });
 
     // Store leap of faith results for hypothesis generation
-    if (circleType === 'leap-of-faith') {
+    if (circleType === 'assumption') {
       setLeapOfFaithResults(aiResponse);
     }
   };
