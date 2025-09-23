@@ -55,18 +55,17 @@ const ThreePQuestions = ({ onBack, onContinue }: ThreePQuestionsProps) => {
 
         <div className="space-y-8">
           {/* Passion Card */}
-          <Card className="construction-sign border-2 border-primary/20">
+          <Card className="border-2 border-primary/20 bg-gradient-to-r from-primary/10 to-primary/5">
             <CardHeader>
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 bg-gradient-to-br from-construction-yellow to-construction-orange rounded-full flex items-center justify-center shadow-playful">
+                <div className="w-16 h-16 bg-gradient-to-br from-primary/80 to-primary/60 rounded-full flex items-center justify-center shadow-playful">
                   <span className="text-2xl">🔥</span>
                 </div>
                 <div>
-                  <CardTitle className="text-2xl text-primary-foreground flex items-center gap-2">
-                    <span className="bg-primary text-primary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold">1</span>
+                  <CardTitle className="text-2xl text-foreground flex items-center gap-2">
                     Passion
                   </CardTitle>
-                  <CardDescription className="text-primary-foreground/80 text-base">
+                  <CardDescription className="text-muted-foreground text-base">
                     Why solving this problem fires you up every morning
                   </CardDescription>
                 </div>
@@ -95,7 +94,6 @@ const ThreePQuestions = ({ onBack, onContinue }: ThreePQuestionsProps) => {
                 </div>
                 <div>
                   <CardTitle className="text-2xl text-foreground flex items-center gap-2">
-                    <span className="bg-construction-green text-white w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold">2</span>
                     Potential
                   </CardTitle>
                   <CardDescription className="text-muted-foreground text-base">
@@ -127,7 +125,6 @@ const ThreePQuestions = ({ onBack, onContinue }: ThreePQuestionsProps) => {
                 </div>
                 <div>
                   <CardTitle className="text-2xl text-foreground flex items-center gap-2">
-                    <span className="bg-secondary text-secondary-foreground w-8 h-8 rounded-full flex items-center justify-center text-lg font-bold">3</span>
                     People
                   </CardTitle>
                   <CardDescription className="text-muted-foreground text-base">
