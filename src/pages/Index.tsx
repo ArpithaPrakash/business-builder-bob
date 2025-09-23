@@ -53,7 +53,7 @@ const Index = () => {
 
   const handleCPSContinue = (data: any) => {
     setCpsData(data);
-    setCurrentStep('image-gen');
+    setCurrentStep('lofa');
   };
 
   const handleBackToCPS = () => {
@@ -61,7 +61,7 @@ const Index = () => {
   };
 
   const handleLoginContinue = () => {
-    setCurrentStep('video');
+    setCurrentStep('image-gen');
   };
 
   const handleBackToLogin = () => {
@@ -69,7 +69,7 @@ const Index = () => {
   };
 
   const handleImageGenContinue = () => {
-    setCurrentStep('lofa');
+    setCurrentStep('video');
   };
 
   const handleBackToImageGen = () => {
@@ -110,10 +110,19 @@ const Index = () => {
         />
       )}
       
+      {currentStep === 'image-gen' && currentIdea && (
+        <ImageGenerator
+          businessIdea={currentIdea}
+          cpsData={null}
+          onBack={handleBackToLogin}
+          onContinue={handleImageGenContinue}
+        />
+      )}
+      
       {currentStep === 'video' && currentIdea && (
         <VideoIntroPage 
           businessIdea={currentIdea}
-          onBack={handleBackToLogin}
+          onBack={handleBackToImageGen}
           onStartBuilding={handleStartBuilding}
         />
       )}
@@ -125,19 +134,10 @@ const Index = () => {
         />
       )}
       
-      {currentStep === 'image-gen' && currentIdea && cpsData && (
-        <ImageGenerator
-          businessIdea={currentIdea}
-          cpsData={cpsData}
-          onBack={handleBackToCPS}
-          onContinue={handleImageGenContinue}
-        />
-      )}
-      
       {currentStep === 'lofa' && cpsData && (
         <LeapOfFaithBuilder
           cpsData={cpsData}
-          onBack={handleBackToImageGen}
+          onBack={handleBackToCPS}
           onNext={handleLOFANext}
         />
       )}
