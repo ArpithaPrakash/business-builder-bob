@@ -235,7 +235,7 @@ const LoginPage = ({ onBack, onContinue }: LoginPageProps) => {
         <div className="flex justify-between items-center mt-8">
           <Button variant="outline" onClick={onBack} className="flex items-center gap-2">
             <ArrowLeft className="w-4 h-4" />
-            Back to CPS
+            Back to 3P's
           </Button>
           
           <p className="text-xs text-muted-foreground text-center">

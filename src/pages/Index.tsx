@@ -35,7 +35,7 @@ const Index = () => {
 
   const handleThreePContinue = (answers: ThreePAnswers) => {
     setThreePAnswers(answers);
-    setCurrentStep('video');
+    setCurrentStep('login');
   };
 
   const handleBackTo3P = () => {
@@ -53,7 +53,7 @@ const Index = () => {
 
   const handleCPSContinue = (data: any) => {
     setCpsData(data);
-    setCurrentStep('login');
+    setCurrentStep('image-gen');
   };
 
   const handleBackToCPS = () => {
@@ -61,7 +61,7 @@ const Index = () => {
   };
 
   const handleLoginContinue = () => {
-    setCurrentStep('image-gen');
+    setCurrentStep('video');
   };
 
   const handleBackToLogin = () => {
@@ -103,10 +103,17 @@ const Index = () => {
         />
       )}
       
+      {currentStep === 'login' && (
+        <LoginPage
+          onBack={handleBackTo3P}
+          onContinue={handleLoginContinue}
+        />
+      )}
+      
       {currentStep === 'video' && currentIdea && (
         <VideoIntroPage 
           businessIdea={currentIdea}
-          onBack={handleBackTo3P}
+          onBack={handleBackToLogin}
           onStartBuilding={handleStartBuilding}
         />
       )}
@@ -118,18 +125,11 @@ const Index = () => {
         />
       )}
       
-      {currentStep === 'login' && (
-        <LoginPage
-          onBack={handleBackToCPS}
-          onContinue={handleLoginContinue}
-        />
-      )}
-      
       {currentStep === 'image-gen' && currentIdea && cpsData && (
         <ImageGenerator
           businessIdea={currentIdea}
           cpsData={cpsData}
-          onBack={handleBackToLogin}
+          onBack={handleBackToCPS}
           onContinue={handleImageGenContinue}
         />
       )}
