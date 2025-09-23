@@ -3,6 +3,7 @@ import Hero from '@/components/Hero';
 import ThreePQuestions, { ThreePAnswers } from '@/components/ThreePQuestions';
 import VideoIntroPage from '@/components/VideoIntroPage';
 import CPSHypothesisBuilder from '@/components/CPSHypothesisBuilder';
+import LoginPage from '@/components/LoginPage';
 import ImageGenerator from '@/components/ImageGenerator';
 import LeapOfFaithBuilder from '@/components/LeapOfFaithBuilder';
 import MomTestBuilder from '@/components/MomTestBuilder';
@@ -10,7 +11,7 @@ import MomTestBuilder from '@/components/MomTestBuilder';
 const Index = () => {
   const [currentIdea, setCurrentIdea] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState<'hero' | '3p' | 'video' | 'cps' | 'image-gen' | 'lofa' | 'mom-test'>('hero');
+  const [currentStep, setCurrentStep] = useState<'hero' | '3p' | 'video' | 'cps' | 'login' | 'image-gen' | 'lofa' | 'mom-test'>('hero');
   const [threePAnswers, setThreePAnswers] = useState<ThreePAnswers | null>(null);
   const [cpsData, setCpsData] = useState<any>(null);
   const [lofaData, setLofaData] = useState<string[]>([]);
@@ -52,11 +53,19 @@ const Index = () => {
 
   const handleCPSContinue = (data: any) => {
     setCpsData(data);
-    setCurrentStep('image-gen');
+    setCurrentStep('login');
   };
 
   const handleBackToCPS = () => {
     setCurrentStep('cps');
+  };
+
+  const handleLoginContinue = () => {
+    setCurrentStep('image-gen');
+  };
+
+  const handleBackToLogin = () => {
+    setCurrentStep('login');
   };
 
   const handleImageGenContinue = () => {
@@ -109,11 +118,18 @@ const Index = () => {
         />
       )}
       
+      {currentStep === 'login' && (
+        <LoginPage
+          onBack={handleBackToCPS}
+          onContinue={handleLoginContinue}
+        />
+      )}
+      
       {currentStep === 'image-gen' && currentIdea && cpsData && (
         <ImageGenerator
           businessIdea={currentIdea}
           cpsData={cpsData}
-          onBack={handleBackToCPS}
+          onBack={handleBackToLogin}
           onContinue={handleImageGenContinue}
         />
       )}
