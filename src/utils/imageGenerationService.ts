@@ -142,7 +142,7 @@ class ImageGenerationService {
   /**
    * Create a business-focused prompt from CPS data
    */
-  static createBusinessPrompt(businessIdea: string, cpsData: { customer: string; problem: string; solution: string }, style: string = 'professional'): string {
+  static createBusinessPrompt(businessIdea: string, cpsData: { customer: string; problem: string; solution: string } | null, style: string = 'professional'): string {
     // Create a comprehensive prompt that incorporates all business data
     const businessType = this.inferBusinessType(businessIdea, cpsData);
     
@@ -168,8 +168,10 @@ class ImageGenerationService {
         basePrompt = `Professional business concept for ${businessIdea}. Modern office environment, business meeting, professional workspace`;
     }
 
-    // Add solution context
-    basePrompt += `. Solution: ${cpsData.solution.slice(0, 100)}`;
+    // Add solution context if available
+    if (cpsData?.solution) {
+      basePrompt += `. Solution: ${cpsData.solution.slice(0, 100)}`;
+    }
 
     return basePrompt;
   }
@@ -177,8 +179,13 @@ class ImageGenerationService {
   /**
    * Infer business type from text content
    */
-  private static inferBusinessType(idea: string, cpsData: { customer: string; problem: string; solution: string }): string {
-    const allText = `${idea} ${cpsData.customer} ${cpsData.problem} ${cpsData.solution}`.toLowerCase();
+  private static inferBusinessType(idea: string, cpsData: { customer: string; problem: string; solution: string } | null): string {
+    let allText = idea.toLowerCase();
+    
+    // Add CPS data to analysis if available
+    if (cpsData) {
+      allText += ` ${cpsData.customer} ${cpsData.problem} ${cpsData.solution}`.toLowerCase();
+    }
     
     if (allText.includes('tech') || allText.includes('app') || allText.includes('software') || allText.includes('digital') || allText.includes('platform')) {
       return 'tech';

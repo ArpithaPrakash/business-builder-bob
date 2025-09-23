@@ -14,7 +14,7 @@ interface CPSData {
 
 interface ImageGeneratorProps {
   businessIdea: string;
-  cpsData: CPSData;
+  cpsData: CPSData | null;
   onBack: () => void;
   onContinue: () => void;
 }
@@ -144,10 +144,12 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
                 <h3 className="font-semibold text-construction-green mb-2">Business Idea:</h3>
                 <p className="text-muted-foreground">{businessIdea}</p>
               </div>
-              <div>
-                <h3 className="font-semibold text-construction-green mb-2">Solution:</h3>
-                <p className="text-muted-foreground">{cpsData.solution}</p>
-              </div>
+              {cpsData && (
+                <div>
+                  <h3 className="font-semibold text-construction-green mb-2">Solution:</h3>
+                  <p className="text-muted-foreground">{cpsData.solution}</p>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -240,7 +242,7 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
               className="flex items-center gap-2"
             >
               <ArrowLeft className="w-4 h-4" />
-              Back to CPS Builder
+              Back to Login
             </Button>
             
             {generatedImage && (
