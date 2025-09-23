@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -27,6 +27,11 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
   const [currentProvider, setCurrentProvider] = useState<string>('');
   const [generationSeed, setGenerationSeed] = useState<number>(ImageGenerationService.generateRandomSeed());
   const { toast } = useToast();
+
+  // Auto-generate image on component mount
+  useEffect(() => {
+    generateImage(false);
+  }, []);
 
   const generateImage = async (regenerate: boolean = false) => {
     setIsGenerating(true);
@@ -156,23 +161,6 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
               </CardTitle>
             </CardHeader>
             <CardContent>
-              {!generatedImage && !isGenerating && (
-                <div className="text-center py-12">
-                  <Image className="w-16 h-16 mx-auto text-muted-foreground mb-4" />
-                  <p className="text-muted-foreground mb-6">
-                    Generate a professional visual representation of your business concept
-                  </p>
-                  <Button 
-                    onClick={handleInitialGenerate}
-                    className="bg-construction-yellow text-construction-orange hover:bg-construction-yellow/90"
-                    size="lg"
-                  >
-                    <Sparkles className="w-5 h-5 mr-2" />
-                    Generate Image
-                  </Button>
-                </div>
-              )}
-
               {isGenerating && (
                 <div className="text-center py-12">
                   <Loader2 className="w-16 h-16 mx-auto text-construction-orange animate-spin mb-4" />
