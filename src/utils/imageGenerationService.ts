@@ -67,7 +67,7 @@ class ImageGenerationService {
         height: height.toString(),
         model: 'flux', // Use Flux model for better quality
         nologo: 'true',
-        enhance: 'true'
+        enhance: 'false' // Disable enhance to avoid potential issues
       });
       
       if (seed !== undefined) {
@@ -76,18 +76,14 @@ class ImageGenerationService {
 
       const imageUrl = `https://image.pollinations.ai/prompt/${encodedPrompt}?${params.toString()}`;
       
-      // Test if the image loads successfully
-      const response = await fetch(imageUrl, { method: 'HEAD' });
+      console.log('Generated Pollinations URL:', imageUrl);
       
-      if (response.ok) {
-        return {
-          success: true,
-          imageUrl,
-          provider: 'Pollinations.AI'
-        };
-      } else {
-        throw new Error(`HTTP ${response.status}`);
-      }
+      // Return the URL directly - images load via browser
+      return {
+        success: true,
+        imageUrl,
+        provider: 'Pollinations.AI'
+      };
     } catch (error) {
       console.error('Pollinations.AI error:', error);
       return {

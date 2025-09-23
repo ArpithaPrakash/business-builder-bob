@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { ArrowLeft, Download, RefreshCw, Image, Loader2, Palette, Sparkles } from 'lucide-react';
+import { ArrowLeft, Download, RefreshCw, Image, Loader2, Sparkles } from 'lucide-react';
 import ImageGenerationService from '@/utils/imageGenerationService';
 import { useToast } from '@/components/ui/use-toast';
 
@@ -104,13 +104,8 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
     }
   };
 
-  const handleStyleChange = (newStyle: 'realistic' | 'artistic' | 'professional' | 'minimalist' | 'corporate') => {
-    setCurrentStyle(newStyle);
-    // Auto-regenerate with new style if image exists
-    if (generatedImage && !isGenerating) {
-      generateImage(true);
-    }
-  };
+  // Remove the style selection from UI but keep the logic for backend
+  // Style is set to 'professional' by default
 
   const handleInitialGenerate = () => {
     generateImage(false);
@@ -151,41 +146,13 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
             </CardContent>
           </Card>
 
-          {/* Style Selection */}
-          <Card className="border-2 border-construction-green/30">
-            <CardHeader>
-              <CardTitle className="text-construction-green flex items-center gap-2">
-                <Palette className="w-6 h-6" />
-                Visual Style
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex flex-col gap-4">
-                <p className="text-sm text-muted-foreground">
-                  Choose the visual style for your business concept image:
-                </p>
-                <Select value={currentStyle} onValueChange={handleStyleChange}>
-                  <SelectTrigger className="w-full">
-                    <SelectValue placeholder="Select a style" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="professional">Professional - Clean, business-oriented</SelectItem>
-                    <SelectItem value="realistic">Realistic - Photorealistic imagery</SelectItem>
-                    <SelectItem value="minimalist">Minimalist - Clean and simple</SelectItem>
-                    <SelectItem value="corporate">Corporate - Sophisticated business style</SelectItem>
-                    <SelectItem value="artistic">Artistic - Creative and vibrant</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </CardContent>
-          </Card>
 
           {/* Image Generation Section */}
           <Card className="border-2 border-construction-orange/30">
             <CardHeader>
               <CardTitle className="text-construction-orange flex items-center gap-2">
                 <Sparkles className="w-6 h-6" />
-                AI Generated Visual Concept
+                Visual Concept
                 {currentProvider && (
                   <span className="text-sm font-normal text-muted-foreground ml-2">
                     powered by {currentProvider}
@@ -201,7 +168,7 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
                     Generate a high-quality, professional visual representation of your business concept
                   </p>
                   <p className="text-sm text-muted-foreground mb-6">
-                    Resolution: 1024×1024 • Style: {currentStyle} • Quality: Ultra HD
+                    Resolution: 1024×1024 • Quality: Ultra HD
                   </p>
                   <Button 
                     onClick={handleInitialGenerate}
@@ -219,7 +186,7 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
                   <Loader2 className="w-16 h-16 mx-auto text-construction-orange animate-spin mb-4" />
                   <p className="text-construction-orange font-medium mb-2">Generating your high-quality concept image...</p>
                   <p className="text-sm text-muted-foreground mb-2">
-                    Using advanced AI models • Style: {currentStyle}
+                    Using advanced AI models
                   </p>
                   <p className="text-xs text-muted-foreground">
                     This may take 10-30 seconds for optimal quality
@@ -249,9 +216,16 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
                     <div className="relative group">
                       <img 
                         src={generatedImage} 
-                        alt="AI generated business concept visualization"
+                        alt="Business concept visualization"
                         className="max-w-full h-auto rounded-lg shadow-lg border-2 border-construction-yellow/30 transition-transform hover:scale-105"
                         style={{ maxHeight: '512px' }}
+                        onError={(e) => {
+                          console.error('Image failed to load:', generatedImage);
+                          setError('Generated image failed to load. Please try regenerating.');
+                        }}
+                        onLoad={() => {
+                          console.log('Image loaded successfully:', generatedImage);
+                        }}
                       />
                       <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors rounded-lg" />
                     </div>
@@ -259,7 +233,7 @@ const ImageGenerator = ({ businessIdea, cpsData, onBack, onContinue }: ImageGene
                   
                   <div className="text-center">
                     <p className="text-sm text-muted-foreground mb-4">
-                      High-quality 1024×1024 image • Style: {currentStyle} • Generated by {currentProvider}
+                      High-quality 1024×1024 image • Generated by {currentProvider}
                     </p>
                   </div>
                   
