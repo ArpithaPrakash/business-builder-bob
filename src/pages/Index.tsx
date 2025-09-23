@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import Hero from '@/components/Hero';
+import ThreePQuestions, { ThreePAnswers } from '@/components/ThreePQuestions';
 import VideoIntroPage from '@/components/VideoIntroPage';
 import CPSHypothesisBuilder from '@/components/CPSHypothesisBuilder';
 import ImageGenerator from '@/components/ImageGenerator';
@@ -9,7 +10,8 @@ import MomTestBuilder from '@/components/MomTestBuilder';
 const Index = () => {
   const [currentIdea, setCurrentIdea] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState<'hero' | 'video' | 'cps' | 'image-gen' | 'lofa' | 'mom-test'>('hero');
+  const [currentStep, setCurrentStep] = useState<'hero' | '3p' | 'video' | 'cps' | 'image-gen' | 'lofa' | 'mom-test'>('hero');
+  const [threePAnswers, setThreePAnswers] = useState<ThreePAnswers | null>(null);
   const [cpsData, setCpsData] = useState<any>(null);
   const [lofaData, setLofaData] = useState<string[]>([]);
 
@@ -20,14 +22,23 @@ const Index = () => {
     // Small delay to show loading state
     setTimeout(() => {
       setIsLoading(false);
-      setCurrentStep('video');
+      setCurrentStep('3p');
     }, 1000);
   };
 
-  const handleBackToImage = () => {
+  const handleBackToHero = () => {
     setCurrentIdea(null);
     setIsLoading(false);
     setCurrentStep('hero');
+  };
+
+  const handleThreePContinue = (answers: ThreePAnswers) => {
+    setThreePAnswers(answers);
+    setCurrentStep('video');
+  };
+
+  const handleBackTo3P = () => {
+    setCurrentStep('3p');
   };
 
   const handleStartBuilding = () => {
@@ -76,10 +87,17 @@ const Index = () => {
         <Hero onSubmitIdea={handleIdeaSubmit} isLoading={isLoading} />
       )}
       
+      {currentStep === '3p' && (
+        <ThreePQuestions 
+          onBack={handleBackToHero}
+          onContinue={handleThreePContinue}
+        />
+      )}
+      
       {currentStep === 'video' && currentIdea && (
         <VideoIntroPage 
           businessIdea={currentIdea}
-          onBack={handleBackToImage}
+          onBack={handleBackTo3P}
           onStartBuilding={handleStartBuilding}
         />
       )}
