@@ -40,7 +40,7 @@ const ThreePQuestions = ({ onBack, onContinue }: ThreePQuestionsProps) => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-background via-muted/30 to-secondary/20 blueprint-bg p-4">
-      <div className="w-full max-w-3xl mx-auto py-8">
+      <div className="w-full max-w-4xl mx-auto py-8">
         <div className="text-center mb-12">
           <div className="w-24 h-24 bg-gradient-construction rounded-full flex items-center justify-center mx-auto mb-6 shadow-construction">
             <span className="text-4xl">🏗️</span>
@@ -67,7 +67,7 @@ const ThreePQuestions = ({ onBack, onContinue }: ThreePQuestionsProps) => {
                     Passion
                   </CardTitle>
                   <CardDescription className="text-primary-foreground/80 text-base">
-                    🔥 Why solving this problem fires you up every morning
+                    Why solving this problem fires you up every morning
                   </CardDescription>
                 </div>
               </div>
@@ -99,7 +99,7 @@ const ThreePQuestions = ({ onBack, onContinue }: ThreePQuestionsProps) => {
                     Potential
                   </CardTitle>
                   <CardDescription className="text-muted-foreground text-base">
-                    💪 Your superpowers that make you the best builder for this job
+                    Your superpowers that make you the best builder for this job
                   </CardDescription>
                 </div>
               </div>
@@ -131,7 +131,7 @@ const ThreePQuestions = ({ onBack, onContinue }: ThreePQuestionsProps) => {
                     People
                   </CardTitle>
                   <CardDescription className="text-muted-foreground text-base">
-                    👥 The community who will live and work in what you build
+                    The community who will live and work in what you build
                   </CardDescription>
                 </div>
               </div>

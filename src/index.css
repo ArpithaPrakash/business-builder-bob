@@ -16,7 +16,7 @@ All colors MUST be HSL. Bright, playful, Duolingo-inspired with construction ele
 
     /* Construction Theme Colors */
     --construction-yellow: 45 100% 55%;
-    --construction-orange: 25 100% 60%;
+    --construction-orange: 25 85% 50%;
     --construction-green: 142 71% 45%;
     --blueprint-blue: 210 100% 65%;
     --safety-orange: 15 100% 55%;
@@ -29,7 +29,7 @@ All colors MUST be HSL. Bright, playful, Duolingo-inspired with construction ele
     --secondary: 210 100% 65%; /* Blueprint Blue */
     --secondary-foreground: 0 0% 100%;
     
-    --accent: 25 100% 60%; /* Construction Orange */
+    --accent: 25 85% 50%; /* Construction Orange */
     --accent-foreground: 0 0% 100%;
     
     --card: 0 0% 100%;
