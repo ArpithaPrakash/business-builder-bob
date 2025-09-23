@@ -155,21 +155,15 @@ const ThreePQuestions = ({ onBack, onContinue }: ThreePQuestionsProps) => {
             Back to Idea
           </Button>
           
-          <div className="text-center">
-            <p className="text-sm text-muted-foreground mb-2">
-              🚧 Foundation Complete: {Object.values(answers).filter(Boolean).length}/3
-            </p>
-            <Button 
-              onClick={handleContinue}
-              disabled={!isComplete}
-              className="flex items-center gap-2 bg-gradient-construction hover:opacity-90 text-primary-foreground font-bold px-8"
-              size="lg"
-            >
-              Start Building! 
-              <span className="text-xl">🏗️</span>
-              <ArrowRight className="w-4 h-4" />
-            </Button>
-          </div>
+          <Button 
+            variant="outline"
+            onClick={handleContinue}
+            disabled={!isComplete}
+            className="flex items-center gap-2 border-2 disabled:opacity-50"
+          >
+            Start Building
+            <ArrowRight className="w-4 h-4" />
+          </Button>
         </div>
       </div>
     </div>
