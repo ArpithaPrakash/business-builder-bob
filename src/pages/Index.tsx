@@ -9,11 +9,12 @@ import LeapOfFaithBuilder from '@/components/LeapOfFaithBuilder';
 import MomTestBuilder from '@/components/MomTestBuilder';
 import CustomerDiscovery from '@/components/CustomerDiscovery';
 import ScreenshotUpload from '@/components/ScreenshotUpload';
+import OutreachMessage from '@/components/OutreachMessage';
 
 const Index = () => {
   const [currentIdea, setCurrentIdea] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState<'hero' | '3p' | 'video' | 'cps' | 'login' | 'image-gen' | 'lofa' | 'mom-test' | 'customer-discovery' | 'screenshot-upload'>('hero');
+  const [currentStep, setCurrentStep] = useState<'hero' | '3p' | 'video' | 'cps' | 'login' | 'image-gen' | 'lofa' | 'mom-test' | 'customer-discovery' | 'screenshot-upload' | 'outreach-message'>('hero');
   const [threePAnswers, setThreePAnswers] = useState<ThreePAnswers | null>(null);
   const [cpsData, setCpsData] = useState<any>(null);
   const [lofaData, setLofaData] = useState<string[]>([]);
@@ -104,8 +105,16 @@ const Index = () => {
   };
 
   const handleScreenshotUploadComplete = () => {
+    setCurrentStep('outreach-message');
+  };
+
+  const handleBackToScreenshotUpload = () => {
+    setCurrentStep('screenshot-upload');
+  };
+
+  const handleOutreachMessageComplete = () => {
     // Final completion - could redirect to a thank you page or reset
-    console.log("Screenshot upload complete!", { currentIdea, cpsData, lofaData });
+    console.log("Outreach message complete!", { currentIdea, cpsData, lofaData });
     // For now, just log completion
   };
 
@@ -183,6 +192,13 @@ const Index = () => {
         <ScreenshotUpload
           onBack={handleBackToCustomerDiscovery}
           onContinue={handleScreenshotUploadComplete}
+        />
+      )}
+      
+      {currentStep === 'outreach-message' && (
+        <OutreachMessage
+          onBack={handleBackToScreenshotUpload}
+          onContinue={handleOutreachMessageComplete}
         />
       )}
     </div>
