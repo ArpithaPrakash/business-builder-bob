@@ -69,7 +69,7 @@ Solution: ${cpsData.solution}
 
 Generate 2-3 Leap of Faith Assumptions using the exact format specified in the task definition above. Focus on assumptions that, if proven wrong, would significantly jeopardize the viability of the idea.`;
     } else if (circleType === 'hypothesis') {
-      if (leapOfFaithResults.length === 0) {
+      if (!leapOfFaithResults || leapOfFaithResults.length === 0) {
         return ['Please click on "Leap of Faith Assumptions" first to generate assumptions before creating hypotheses.'];
       }
       
@@ -113,7 +113,7 @@ Generate 3 key validation questions that need to be answered:`;
     }
 
     try {
-      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`, {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${apiKey}`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
