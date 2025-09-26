@@ -8,11 +8,12 @@ import ImageGenerator from '@/components/ImageGenerator';
 import LeapOfFaithBuilder from '@/components/LeapOfFaithBuilder';
 import MomTestBuilder from '@/components/MomTestBuilder';
 import CustomerDiscovery from '@/components/CustomerDiscovery';
+import ScreenshotUpload from '@/components/ScreenshotUpload';
 
 const Index = () => {
   const [currentIdea, setCurrentIdea] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
-  const [currentStep, setCurrentStep] = useState<'hero' | '3p' | 'video' | 'cps' | 'login' | 'image-gen' | 'lofa' | 'mom-test' | 'customer-discovery'>('hero');
+  const [currentStep, setCurrentStep] = useState<'hero' | '3p' | 'video' | 'cps' | 'login' | 'image-gen' | 'lofa' | 'mom-test' | 'customer-discovery' | 'screenshot-upload'>('hero');
   const [threePAnswers, setThreePAnswers] = useState<ThreePAnswers | null>(null);
   const [cpsData, setCpsData] = useState<any>(null);
   const [lofaData, setLofaData] = useState<string[]>([]);
@@ -95,8 +96,16 @@ const Index = () => {
   };
 
   const handleCustomerDiscoveryComplete = () => {
+    setCurrentStep('screenshot-upload');
+  };
+
+  const handleBackToCustomerDiscovery = () => {
+    setCurrentStep('customer-discovery');
+  };
+
+  const handleScreenshotUploadComplete = () => {
     // Final completion - could redirect to a thank you page or reset
-    console.log("Customer discovery complete!", { currentIdea, cpsData, lofaData });
+    console.log("Screenshot upload complete!", { currentIdea, cpsData, lofaData });
     // For now, just log completion
   };
 
@@ -167,6 +176,13 @@ const Index = () => {
           businessIdea={currentIdea}
           onBack={handleBackToMomTest}
           onContinue={handleCustomerDiscoveryComplete}
+        />
+      )}
+      
+      {currentStep === 'screenshot-upload' && (
+        <ScreenshotUpload
+          onBack={handleBackToCustomerDiscovery}
+          onContinue={handleScreenshotUploadComplete}
         />
       )}
     </div>
