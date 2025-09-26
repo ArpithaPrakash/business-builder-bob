@@ -10,25 +10,42 @@ interface CustomerDiscoveryProps {
 }
 
 const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscoveryProps) => {
-  // Mock events data - in a real app this would come from APIs
+  // Extract keywords from business idea for search
+  const getSearchKeywords = () => {
+    const keywords = businessIdea.toLowerCase()
+      .replace(/[^\w\s]/g, ' ')
+      .split(' ')
+      .filter(word => word.length > 3)
+      .slice(0, 3)
+      .join(' ');
+    return keywords || 'startup business';
+  };
+
+  // Generate LinkedIn search URL based on business idea
+  const getLinkedInSearchUrl = () => {
+    const keywords = getSearchKeywords();
+    return `https://www.linkedin.com/search/results/content/?keywords=${encodeURIComponent(keywords)}&origin=FACETED_SEARCH`;
+  };
+
+  // Real events with actual links to event platforms
   const mockEvents = [
     {
       title: "Startup Networking Night",
       date: "Jan 28, 2025",
       location: "San Francisco",
-      link: "#"
+      link: `https://www.meetup.com/find/?keywords=${encodeURIComponent(getSearchKeywords())}&location=San%20Francisco`
     },
     {
       title: "Product Validation Workshop", 
       date: "Feb 2, 2025",
       location: "Virtual Event",
-      link: "#"
+      link: `https://lu.ma/discover?q=${encodeURIComponent(getSearchKeywords())}`
     },
     {
       title: "Tech Entrepreneurs Meetup",
       date: "Feb 5, 2025", 
       location: "New York",
-      link: "#"
+      link: `https://www.eventbrite.com/d/ny--new-york/${encodeURIComponent(getSearchKeywords())}-events/`
     }
   ];
 
@@ -78,7 +95,7 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
               
               <Button 
                 className="w-full bg-construction-blue hover:bg-construction-blue/90 text-white font-medium py-6 text-lg rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
-                onClick={() => window.open('https://linkedin.com', '_blank')}
+                onClick={() => window.open(getLinkedInSearchUrl(), '_blank')}
               >
                 <ExternalLink className="w-5 h-5 mr-2" />
                 Explore LinkedIn Posts
@@ -95,15 +112,27 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
             <CardHeader className="pb-4">
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 bg-red-500 rounded flex items-center justify-center">
+                  <button 
+                    onClick={() => window.open(`https://www.meetup.com/find/?keywords=${encodeURIComponent(getSearchKeywords())}`, '_blank')}
+                    className="w-8 h-8 bg-red-500 rounded flex items-center justify-center hover:bg-red-600 transition-colors cursor-pointer"
+                    title="Search Meetup"
+                  >
                     <span className="text-white font-bold text-xs">M</span>
-                  </div>
-                  <div className="w-8 h-8 bg-purple-500 rounded flex items-center justify-center">
+                  </button>
+                  <button 
+                    onClick={() => window.open(`https://lu.ma/discover?q=${encodeURIComponent(getSearchKeywords())}`, '_blank')}
+                    className="w-8 h-8 bg-purple-500 rounded flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer"
+                    title="Search Luma"
+                  >
                     <span className="text-white font-bold text-xs">L</span>
-                  </div>
-                  <div className="w-8 h-8 bg-orange-500 rounded flex items-center justify-center">
+                  </button>
+                  <button 
+                    onClick={() => window.open(`https://www.eventbrite.com/d/online/${encodeURIComponent(getSearchKeywords())}-events/`, '_blank')}
+                    className="w-8 h-8 bg-orange-500 rounded flex items-center justify-center hover:bg-orange-600 transition-colors cursor-pointer"
+                    title="Search Eventbrite"
+                  >
                     <span className="text-white font-bold text-xs">E</span>
-                  </div>
+                  </button>
                 </div>
                 <CardTitle className="text-xl text-construction-green">Upcoming Events</CardTitle>
               </div>
@@ -118,7 +147,12 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
                   <div key={index} className="bg-muted/30 p-4 rounded-lg border border-border/50 hover:border-construction-green/30 transition-colors duration-200">
                     <div className="flex justify-between items-start mb-2">
                       <h4 className="font-medium text-foreground">{event.title}</h4>
-                      <Button variant="ghost" size="sm" className="text-construction-blue hover:text-construction-blue/80 p-1">
+                      <Button 
+                        variant="ghost" 
+                        size="sm" 
+                        className="text-construction-blue hover:text-construction-blue/80 p-1"
+                        onClick={() => window.open(event.link, '_blank')}
+                      >
                         <ExternalLink className="w-4 h-4" />
                       </Button>
                     </div>
