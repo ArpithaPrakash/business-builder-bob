@@ -35,28 +35,32 @@ React.useEffect(() => {
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const keywords = getSearchKeywords();
+      const keywords = encodeURIComponent(getSearchKeywords());
+      const apiKey = "JQ4FjN07yjrgpRgfzrEjrAv-tOWCfadwNialxZBe"; 
 
-      const response = await fetch('/api/fetch-predicthq-events', {
-        method: 'POST',
+      const url = `https://api.predicthq.com/v1/events/?q=${keywords}&limit=20&country=US&sort=start`;
+
+      const resp = await fetch(url, {
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          Authorization: `Bearer ${apiKey}`,
+          Accept: "application/json",
         },
-        body: JSON.stringify({ keywords })
       });
 
-      if (!response.ok) {
-        console.error("PredictHQ API error:", response.status, response.statusText);
+      if (!resp.ok) {
+        console.error("PredictHQ API error:", resp.status, resp.statusText);
         setEvents([]);
         return;
       }
 
-      const data = await response.json();
+      const data = await resp.json();
       console.log("PredictHQ API response:", data);
 
       let newEvents: any[] = [];
 
       if (data?.results?.length > 0) {
+        // ✅ keep only events with title + start
         newEvents = data.results
           .filter((ev: any) => ev.title && ev.start)
           .slice(0, 3)
@@ -80,7 +84,7 @@ React.useEffect(() => {
           }));
       }
 
-      // Fill placeholders if < 3
+      // fill placeholders if < 3
       while (newEvents.length < 3) {
         newEvents.push({
           title: "More events available on PredictHQ",
