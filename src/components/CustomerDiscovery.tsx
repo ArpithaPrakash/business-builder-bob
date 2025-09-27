@@ -10,7 +10,7 @@ interface CustomerDiscoveryProps {
 }
 
 const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscoveryProps) => {
-  \
+  
   const getSearchKeywords = () => {
     const keywords = businessIdea.toLowerCase()
       .replace(/[^\w\s]/g, ' ')
