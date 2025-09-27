@@ -31,36 +31,10 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
   const [events, setEvents] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
-  // ✅ Fetch Eventbrite events
+  // Set loading to false immediately since we'll direct users to search manually
   React.useEffect(() => {
-    const fetchEvents = async () => {
-      setLoading(true);
-      try {
-        const keywords = encodeURIComponent(getSearchKeywords());
-
-        const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&sort_by=date&token=LSU54IL3KGABZFGYWD2R`;
-        const eventbriteResp = await fetch(eventbriteUrl).then(r => r.json()).catch(() => null);
-
-        if (eventbriteResp?.events?.length) {
-          const newEvents = eventbriteResp.events.slice(0, 3).map((ev: any) => ({
-            title: ev.name.text,
-            date: new Date(ev.start.local).toLocaleDateString(),
-            location: ev.online_event ? "Online" : ev.venue?.address?.city || "TBA",
-            link: ev.url,
-          }));
-          setEvents(newEvents);
-        } else {
-          setEvents([]);
-        }
-      } catch (err) {
-        console.error("Error fetching events:", err);
-        setEvents([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchEvents();
+    setLoading(false);
+    setEvents([]); // No events to display, we'll show search button instead
   }, [businessIdea]);
 
   return (
@@ -139,49 +113,21 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
             </CardHeader>
             <CardContent className="space-y-6">
               <p className="text-muted-foreground leading-relaxed">
-                Here are the top 3 relevant upcoming events you can attend.
+                Find relevant events where you can meet potential customers and validate your idea.
               </p>
               
-              <div className="space-y-3">
-                {loading ? (
-                  <p className="text-sm text-muted-foreground text-center">
-                    Loading events...
-                  </p>
-                ) : events.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center">
-                    No relevant events found. Try again later.
-                  </p>
-                ) : (
-                  events.map((event, index) => (
-                    <div
-                      key={index}
-                      className="bg-muted/30 p-4 rounded-lg border border-border/50 hover:border-construction-green/30 transition-colors duration-200"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium text-foreground">{event.title}</h4>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-construction-blue hover:text-construction-blue/80 p-1"
-                          onClick={() => window.open(event.link, "_blank")}
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          {event.date}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          {event.location}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
+              <div className="bg-muted/50 p-4 rounded-lg">
+                <p className="text-sm font-medium text-construction-green mb-2">Search Keywords:</p>
+                <p className="text-sm text-muted-foreground italic">"{getSearchKeywords()}"</p>
               </div>
+              
+              <Button 
+                className="w-full bg-construction-green hover:bg-construction-green/90 text-white font-medium py-6 text-lg rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
+                onClick={() => window.open(`https://www.eventbrite.com/d/online/${encodeURIComponent(getSearchKeywords())}-events/`, '_blank')}
+              >
+                <ExternalLink className="w-5 h-5 mr-2" />
+                Search Events on Eventbrite
+              </Button>
 
               <p className="text-sm text-muted-foreground text-center">
                 Attending events is a great way to validate your idea in person.
