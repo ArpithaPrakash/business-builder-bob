@@ -18,7 +18,7 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
       .filter(word => word.length > 3)
       .slice(0, 3)
       .join(' ');
-    return keywords || 'startup';
+    return keywords || 'startup business';
   };
 
   // Generate LinkedIn search URL based on business idea
@@ -27,41 +27,67 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
     return `https://www.linkedin.com/search/results/content/?keywords=${encodeURIComponent(keywords)}&origin=FACETED_SEARCH`;
   };
 
-  // ✅ State for events
-  const [events, setEvents] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState(true);
+  // Real events with actual links to event platforms
+const [events, setEvents] = React.useState<any[]>([]);
+const [loading, setLoading] = React.useState(true);
+React.useEffect(() => {
+  const fetchEvents = async () => {
+    setLoading(true);
+    try {
+      const keywords = encodeURIComponent(getSearchKeywords());
 
-  // ✅ Fetch real Eventbrite events
-  React.useEffect(() => {
-    const fetchEvents = async () => {
-      setLoading(true);
-      try {
-        const keywords = encodeURIComponent(getSearchKeywords());
+      // Eventbrite API (real)
+      const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&token=YOUR_EVENTBRITE_API_KEY`;
+      const eventbriteResp = await fetch(eventbriteUrl).then(r => r.json()).catch(() => null);
 
-        const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&sort_by=date&token=LSU54IL3KGABZFGYWD2R`;
-        const eventbriteResp = await fetch(eventbriteUrl).then(r => r.json()).catch(() => null);
+      const newEvents: any[] = [];
 
-        if (eventbriteResp?.events?.length) {
-          const newEvents = eventbriteResp.events.slice(0, 3).map((ev: any) => ({
-            title: ev.name.text,
-            date: new Date(ev.start.local).toLocaleDateString(),
-            location: ev.online_event ? "Online" : ev.venue?.address?.city || "TBA",
-            link: ev.url,
-          }));
-          setEvents(newEvents);
-        } else {
-          setEvents([]);
-        }
-      } catch (err) {
-        console.error("Error fetching events:", err);
-        setEvents([]);
-      } finally {
-        setLoading(false);
+      // Meetup placeholder (link to search results)
+      newEvents.push({
+        title: "Meetup Search Result",
+        date: "See website",
+        location: "San Francisco",
+        link: `https://www.meetup.com/find/?keywords=${keywords}&location=San%20Francisco`,
+      });
+
+      // Luma placeholder (link to search results)
+      newEvents.push({
+        title: "Luma Discovery Event",
+        date: "See website",
+        location: "Online",
+        link: `https://lu.ma/discover?q=${keywords}`,
+      });
+
+      // Eventbrite (real API, fallback if empty)
+      if (eventbriteResp?.events?.length) {
+        const ev = eventbriteResp.events[0];
+        newEvents.push({
+          title: ev.name.text,
+          date: new Date(ev.start.local).toLocaleDateString(),
+          location: ev.online_event ? "Online" : ev.venue?.address?.city || "TBA",
+          link: ev.url,
+        });
+      } else {
+        newEvents.push({
+          title: "Eventbrite Search Result",
+          date: "See website",
+          location: "Online",
+          link: `https://www.eventbrite.com/d/online/${keywords}-events/`,
+        });
       }
-    };
 
-    fetchEvents();
-  }, [businessIdea]);
+      setEvents(newEvents);
+    } catch (err) {
+      console.error("Error fetching events:", err);
+      setEvents([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  fetchEvents();
+}, [businessIdea]);
+
 
   return (
     <div className="min-h-screen blueprint-bg p-4 md:p-8">
@@ -127,6 +153,20 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
               <div className="flex items-center gap-4 mb-4">
                 <div className="flex items-center gap-2">
                   <button 
+                    onClick={() => window.open(`https://www.meetup.com/find/?keywords=${encodeURIComponent(getSearchKeywords())}`, '_blank')}
+                    className="w-8 h-8 bg-red-500 rounded flex items-center justify-center hover:bg-red-600 transition-colors cursor-pointer"
+                    title="Search Meetup"
+                  >
+                    <span className="text-white font-bold text-xs">M</span>
+                  </button>
+                  <button 
+                    onClick={() => window.open(`https://lu.ma/discover?q=${encodeURIComponent(getSearchKeywords())}`, '_blank')}
+                    className="w-8 h-8 bg-purple-500 rounded flex items-center justify-center hover:bg-purple-600 transition-colors cursor-pointer"
+                    title="Search Luma"
+                  >
+                    <span className="text-white font-bold text-xs">L</span>
+                  </button>
+                  <button 
                     onClick={() => window.open(`https://www.eventbrite.com/d/online/${encodeURIComponent(getSearchKeywords())}-events/`, '_blank')}
                     className="w-8 h-8 bg-orange-500 rounded flex items-center justify-center hover:bg-orange-600 transition-colors cursor-pointer"
                     title="Search Eventbrite"
@@ -142,47 +182,48 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
                 Here are the top 3 relevant upcoming events you can attend.
               </p>
               
-              <div className="space-y-3">
-                {loading ? (
-                  <p className="text-sm text-muted-foreground text-center">
-                    Loading events...
-                  </p>
-                ) : events.length === 0 ? (
-                  <p className="text-sm text-muted-foreground text-center">
-                    No relevant events found. Try again later.
-                  </p>
-                ) : (
-                  events.map((event, index) => (
-                    <div
-                      key={index}
-                      className="bg-muted/30 p-4 rounded-lg border border-border/50 hover:border-construction-green/30 transition-colors duration-200"
-                    >
-                      <div className="flex justify-between items-start mb-2">
-                        <h4 className="font-medium text-foreground">{event.title}</h4>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="text-construction-blue hover:text-construction-blue/80 p-1"
-                          onClick={() => window.open(event.link, "_blank")}
-                        >
-                          <ExternalLink className="w-4 h-4" />
-                        </Button>
-                      </div>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="w-4 h-4" />
-                          {event.date}
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <MapPin className="w-4 h-4" />
-                          {event.location}
-                        </div>
-                      </div>
-                    </div>
-                  ))
-                )}
-              </div>
+             <div className="space-y-3">
+  {loading ? (
+    <p className="text-sm text-muted-foreground text-center">
+      Loading events...
+    </p>
+  ) : events.length === 0 ? (
+    <p className="text-sm text-muted-foreground text-center">
+      No relevant events found. Try again later.
+    </p>
+  ) : (
+    events.map((event, index) => (
+      <div
+        key={index}
+        className="bg-muted/30 p-4 rounded-lg border border-border/50 hover:border-construction-green/30 transition-colors duration-200"
+      >
+        <div className="flex justify-between items-start mb-2">
+          <h4 className="font-medium text-foreground">{event.title}</h4>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-construction-blue hover:text-construction-blue/80 p-1"
+            onClick={() => window.open(event.link, "_blank")}
+          >
+            <ExternalLink className="w-4 h-4" />
+          </Button>
+        </div>
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Calendar className="w-4 h-4" />
+            {event.date}
+          </div>
+          <div className="flex items-center gap-1">
+            <MapPin className="w-4 h-4" />
+            {event.location}
+          </div>
+        </div>
+      </div>
+    ))
+  )}
+</div>
 
+              
               <p className="text-sm text-muted-foreground text-center">
                 Attending events is a great way to validate your idea in person.
               </p>
