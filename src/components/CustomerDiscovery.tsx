@@ -61,10 +61,12 @@ React.useEffect(() => {
 
       if (data?.results?.length > 0) {
         newEvents = data.results
-          .filter((ev: any) => ev.title && ev.start)
-          .slice(0, 3)
+          .slice(0, 3) // take first 3 without over-filtering
           .map((ev: any) => {
-            // format date
+            // Title (always exists)
+            const title = ev.title || "Untitled Event";
+
+            // Date (use start, fallback TBA)
             const date = ev.start
               ? new Date(ev.start).toLocaleString("en-US", {
                   weekday: "short",
@@ -76,25 +78,25 @@ React.useEffect(() => {
                 })
               : "TBA";
 
-            // get location: use place_hierarchies if available
+            // Location (fallback to hierarchy -> lat/lon -> TBA)
             const location =
               ev.entities?.[0]?.name ||
               (ev.place_hierarchies?.[0]
-                ? ev.place_hierarchies[0].join(", ")
+                ? ev.place_hierarchies[0].slice(0, 2).join(", ") // e.g. "San Francisco, US"
                 : ev.location
                 ? `${ev.location.lat}, ${ev.location.lon}`
                 : "TBA");
 
-            return {
-              title: ev.title,
-              date,
-              location,
-              link: ev.url || `https://www.google.com/search?q=${encodeURIComponent(ev.title)}`,
-            };
+            // Link (official URL, else Google search)
+            const link =
+              ev.url ||
+              `https://www.google.com/search?q=${encodeURIComponent(title)}`;
+
+            return { title, date, location, link };
           });
       }
 
-      // fill placeholders if < 3
+      // Ensure 3 slots
       while (newEvents.length < 3) {
         newEvents.push({
           title: "More events available on PredictHQ",
