@@ -60,13 +60,12 @@ React.useEffect(() => {
       let newEvents: any[] = [];
 
       if (data?.results?.length > 0) {
-        
         newEvents = data.results
           .filter((ev: any) => ev.title && ev.start)
           .slice(0, 3)
-          .map((ev: any) => ({
-            title: ev.title,
-            date: ev.start
+          .map((ev: any) => {
+            // format date
+            const date = ev.start
               ? new Date(ev.start).toLocaleString("en-US", {
                   weekday: "short",
                   month: "short",
@@ -75,13 +74,24 @@ React.useEffect(() => {
                   hour: "2-digit",
                   minute: "2-digit",
                 })
-              : "TBA",
-            location:
+              : "TBA";
+
+            // get location: use place_hierarchies if available
+            const location =
               ev.entities?.[0]?.name ||
-              `${ev.location?.lat}, ${ev.location?.lon}` ||
-              "TBA",
-            link: ev.url || `https://www.google.com/search?q=${encodeURIComponent(ev.title)}`,
-          }));
+              (ev.place_hierarchies?.[0]
+                ? ev.place_hierarchies[0].join(", ")
+                : ev.location
+                ? `${ev.location.lat}, ${ev.location.lon}`
+                : "TBA");
+
+            return {
+              title: ev.title,
+              date,
+              location,
+              link: ev.url || `https://www.google.com/search?q=${encodeURIComponent(ev.title)}`,
+            };
+          });
       }
 
       // fill placeholders if < 3
