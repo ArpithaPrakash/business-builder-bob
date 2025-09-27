@@ -30,37 +30,42 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
   // Real events with actual links to event platforms
 const [events, setEvents] = React.useState<any[]>([]);
 const [loading, setLoading] = React.useState(true);
+
 React.useEffect(() => {
   const fetchEvents = async () => {
     setLoading(true);
     try {
       const keywords = encodeURIComponent(getSearchKeywords());
 
-      
-      const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&expand=venue&token=LSU54IL3KGABZFGYWD2R`;
-      const eventbriteResp = await fetch(eventbriteUrl).then(r => r.json()).catch(() => null);
+      // Eventbrite API endpoint 
+      const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&expand=venue&location.address=San+Francisco`;
 
-      const newEvents: any[] = [];
+      const resp = await fetch(eventbriteUrl, {
+        headers: {
+          Authorization: `Bearer LSU54IL3KGABZFGYWD2R`, // 用你的 API Key
+        },
+      });
 
-      if (eventbriteResp?.events?.length) {
-        eventbriteResp.events.slice(0, 3).forEach((ev: any) => {
-          newEvents.push({
-            title: ev.name?.text || "Untitled Event",
-            date: ev.start?.local ? new Date(ev.start.local).toLocaleDateString() : "TBA",
-            location: ev.online_event ? "Online" : ev.venue?.address?.city || "TBA",
-            link: ev.url,
-          });
-        });
-      } else {
-        newEvents.push({
-          title: "No events found on Eventbrite",
-          date: "N/A",
-          location: "N/A",
-          link: `https://www.eventbrite.com/d/online/${keywords}-events/`,
-        });
+      if (!resp.ok) {
+        console.error("Eventbrite API error:", resp.status, resp.statusText);
+        setEvents([]);
+        return;
       }
 
-      setEvents(newEvents);
+      const data = await resp.json();
+      console.log("Eventbrite API data:", data);
+
+      if (data?.events?.length > 0) {
+        const newEvents = data.events.slice(0, 3).map((ev: any) => ({
+          title: ev.name?.text || "Untitled Event",
+          date: ev.start?.local ? new Date(ev.start.local).toLocaleDateString() : "TBA",
+          location: ev.online_event ? "Online" : ev.venue?.address?.city || "TBA",
+          link: ev.url,
+        }));
+        setEvents(newEvents);
+      } else {
+        setEvents([]);
+      }
     } catch (err) {
       console.error("Error fetching events:", err);
       setEvents([]);
