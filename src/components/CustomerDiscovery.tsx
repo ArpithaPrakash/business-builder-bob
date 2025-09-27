@@ -35,37 +35,35 @@ React.useEffect(() => {
   const fetchEvents = async () => {
     setLoading(true);
     try {
-      const keywords = encodeURIComponent(getSearchKeywords());
-      const apiKey = "LSU54IL3KGABZFGYWD2R";
+      const keywords = getSearchKeywords();
 
-      const url = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&location.address=US&expand=venue&token=${apiKey}`;
-
-      const resp = await fetch(url, {
-        method: "GET",
+      const response = await fetch('/api/fetch-predicthq-events', {
+        method: 'POST',
         headers: {
-          Accept: "application/json",
+          'Content-Type': 'application/json',
         },
+        body: JSON.stringify({ keywords })
       });
 
-      if (!resp.ok) {
-        console.error("Eventbrite API error:", resp.status, resp.statusText);
+      if (!response.ok) {
+        console.error("PredictHQ API error:", response.status, response.statusText);
         setEvents([]);
         return;
       }
 
-      const data = await resp.json();
-      console.log("Eventbrite API response:", data);
+      const data = await response.json();
+      console.log("PredictHQ API response:", data);
 
       let newEvents: any[] = [];
 
-      if (data?.events?.length > 0) {
-        newEvents = data.events
-          .filter((ev: any) => ev.name?.text && ev.start?.local)
+      if (data?.results?.length > 0) {
+        newEvents = data.results
+          .filter((ev: any) => ev.title && ev.start)
           .slice(0, 3)
           .map((ev: any) => ({
-            title: ev.name.text,
-            date: ev.start?.local
-              ? new Date(ev.start.local).toLocaleString("en-US", {
+            title: ev.title,
+            date: ev.start
+              ? new Date(ev.start).toLocaleString("en-US", {
                   weekday: "short",
                   month: "short",
                   day: "numeric",
@@ -74,24 +72,27 @@ React.useEffect(() => {
                   minute: "2-digit",
                 })
               : "TBA",
-            location: ev.venue?.name || ev.venue?.address?.city || "Online",
-            link: ev.url || `https://www.eventbrite.com/e/${ev.id}`,
+            location:
+              ev.entities?.[0]?.name ||
+              `${ev.location?.lat}, ${ev.location?.lon}` ||
+              "TBA",
+            link: ev.url || `https://www.google.com/search?q=${encodeURIComponent(ev.title)}`,
           }));
       }
 
       // Fill placeholders if < 3
       while (newEvents.length < 3) {
         newEvents.push({
-          title: "More events available on Eventbrite",
+          title: "More events available on PredictHQ",
           date: "TBA",
-          location: "See Eventbrite",
-          link: `https://www.eventbrite.com/d/online/${keywords}/`,
+          location: "See PredictHQ",
+          link: `https://www.predicthq.com/`,
         });
       }
 
       setEvents(newEvents);
     } catch (err) {
-      console.error("Error fetching Eventbrite events:", err);
+      console.error("Error fetching PredictHQ events:", err);
       setEvents([]);
     } finally {
       setLoading(false);
