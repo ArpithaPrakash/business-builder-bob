@@ -60,7 +60,7 @@ React.useEffect(() => {
       let newEvents: any[] = [];
 
       if (data?.results?.length > 0) {
-        
+       
         newEvents = data.results
           .filter((ev: any) => ev.title && ev.start)
           .slice(0, 3)
@@ -105,7 +105,6 @@ React.useEffect(() => {
 
   fetchEvents();
 }, [businessIdea]);
-
 
   return (
     <div className="min-h-screen blueprint-bg p-4 md:p-8">
