@@ -50,6 +50,8 @@ React.useEffect(() => {
 
       if (!resp.ok) {
         console.error("PredictHQ API error:", resp.status, resp.statusText);
+        const errorText = await resp.text();
+        console.error("Error details:", errorText);
         setEvents([]);
         return;
       }
@@ -60,31 +62,24 @@ React.useEffect(() => {
       let newEvents: any[] = [];
 
       if (data?.results?.length > 0) {
-        // ✅ keep only events with title + start
-        newEvents = data.results
-          .filter((ev: any) => ev.title && ev.start)
-          .slice(0, 3)
-          .map((ev: any) => ({
-            title: ev.title,
-            date: ev.start
-              ? new Date(ev.start).toLocaleString("en-US", {
-                  weekday: "short",
-                  month: "short",
-                  day: "numeric",
-                  year: "numeric",
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })
-              : "TBA",
-            location:
-              ev.entities?.[0]?.name ||
-              `${ev.location?.lat}, ${ev.location?.lon}` ||
-              "TBA",
-            link: ev.url || `https://www.google.com/search?q=${encodeURIComponent(ev.title)}`,
-          }));
+        // 只保留有 url 的
+        const filtered = data.results.filter((ev: any) => ev.url);
+
+        newEvents = filtered.slice(0, 3).map((ev: any) => ({
+          title: ev.title || "Untitled Event",
+          date: ev.start
+            ? new Date(ev.start).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "TBA",
+          location: ev.entities?.[0]?.name || ev.labels?.[0] || "TBA",
+          link: ev.url,
+        }));
       }
 
-      // fill placeholders if < 3
+      // ⚡ 保证至少 3 个（不足时补占位符）
       while (newEvents.length < 3) {
         newEvents.push({
           title: "More events available on PredictHQ",
