@@ -38,7 +38,7 @@ React.useEffect(() => {
       const keywords = encodeURIComponent(getSearchKeywords());
       const apiKey = "JQ4FjN07yjrgpRgfzrEjrAv-tOWCfadwNialxZBe"; 
 
-      const url = `https://api.predicthq.com/v1/events/?q=${keywords}&limit=20&country=US&sort=start`;
+      const url = `https://api.predicthq.com/v1/events/?q=${keywords}&limit=10&country=US&sort=start`;
 
       const resp = await fetch(url, {
         method: "GET",
@@ -50,8 +50,6 @@ React.useEffect(() => {
 
       if (!resp.ok) {
         console.error("PredictHQ API error:", resp.status, resp.statusText);
-        const errorText = await resp.text();
-        console.error("Error details:", errorText);
         setEvents([]);
         return;
       }
@@ -59,37 +57,32 @@ React.useEffect(() => {
       const data = await resp.json();
       console.log("PredictHQ API response:", data);
 
-      let newEvents: any[] = [];
-
       if (data?.results?.length > 0) {
-        
-        const filtered = data.results.filter((ev: any) => ev.url);
+        const filtered = data.results
+          .filter((ev: any) => ev.title && ev.start) 
+          .slice(0, 3) 
+          .map((ev: any) => ({
+            title: ev.title,
+            date: new Date(ev.start).toLocaleString("en-US", {
+              weekday: "short",
+              month: "short",
+              day: "numeric",
+              year: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            }),
+            location:
+              ev.entities?.[0]?.name ||
+              (ev.place_hierarchies?.[0]
+                ? ev.place_hierarchies[0].slice(-1)[0]
+                : "TBA"),
+            link: ev.url || null, 
+          }));
 
-        newEvents = filtered.slice(0, 3).map((ev: any) => ({
-          title: ev.title || "Untitled Event",
-          date: ev.start
-            ? new Date(ev.start).toLocaleDateString("en-US", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })
-            : "TBA",
-          location: ev.entities?.[0]?.name || ev.labels?.[0] || "TBA",
-          link: ev.url,
-        }));
+        setEvents(filtered);
+      } else {
+        setEvents([]); 
       }
-
-      
-      while (newEvents.length < 3) {
-        newEvents.push({
-          title: "More events available on PredictHQ",
-          date: "TBA",
-          location: "See PredictHQ",
-          link: `https://www.predicthq.com/`,
-        });
-      }
-
-      setEvents(newEvents);
     } catch (err) {
       console.error("Error fetching PredictHQ events:", err);
       setEvents([]);
@@ -100,8 +93,6 @@ React.useEffect(() => {
 
   fetchEvents();
 }, [businessIdea]);
-
-
 
   return (
     <div className="min-h-screen blueprint-bg p-4 md:p-8">
