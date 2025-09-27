@@ -36,42 +36,26 @@ React.useEffect(() => {
     try {
       const keywords = encodeURIComponent(getSearchKeywords());
 
-      // Eventbrite API (real)
-      const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&token=YOUR_EVENTBRITE_API_KEY`;
+      
+      const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&expand=venue&token=LSU54IL3KGABZFGYWD2R`;
       const eventbriteResp = await fetch(eventbriteUrl).then(r => r.json()).catch(() => null);
 
       const newEvents: any[] = [];
 
-      // Meetup placeholder (link to search results)
-      newEvents.push({
-        title: "Meetup Search Result",
-        date: "See website",
-        location: "San Francisco",
-        link: `https://www.meetup.com/find/?keywords=${keywords}&location=San%20Francisco`,
-      });
-
-      // Luma placeholder (link to search results)
-      newEvents.push({
-        title: "Luma Discovery Event",
-        date: "See website",
-        location: "Online",
-        link: `https://lu.ma/discover?q=${keywords}`,
-      });
-
-      // Eventbrite (real API, fallback if empty)
       if (eventbriteResp?.events?.length) {
-        const ev = eventbriteResp.events[0];
-        newEvents.push({
-          title: ev.name.text,
-          date: new Date(ev.start.local).toLocaleDateString(),
-          location: ev.online_event ? "Online" : ev.venue?.address?.city || "TBA",
-          link: ev.url,
+        eventbriteResp.events.slice(0, 3).forEach((ev: any) => {
+          newEvents.push({
+            title: ev.name?.text || "Untitled Event",
+            date: ev.start?.local ? new Date(ev.start.local).toLocaleDateString() : "TBA",
+            location: ev.online_event ? "Online" : ev.venue?.address?.city || "TBA",
+            link: ev.url,
+          });
         });
       } else {
         newEvents.push({
-          title: "Eventbrite Search Result",
-          date: "See website",
-          location: "Online",
+          title: "No events found on Eventbrite",
+          date: "N/A",
+          location: "N/A",
           link: `https://www.eventbrite.com/d/online/${keywords}-events/`,
         });
       }
