@@ -80,8 +80,11 @@ const Index = () => {
   };
 
   const handleLOFANext = (lofaAssumptions: string[]) => {
+    console.log('handleLOFANext called with:', lofaAssumptions);
+    console.log('Current state before update:', { currentIdea, cpsData, lofaData });
     setLofaData(lofaAssumptions);
     setCurrentStep('mom-test');
+    console.log('Setting step to mom-test');
   };
 
   const handleBackToLOFA = () => {
@@ -170,7 +173,15 @@ const Index = () => {
         />
       )}
       
-      {currentStep === 'mom-test' && currentIdea && cpsData && lofaData.length > 0 && (
+      {(() => {
+        console.log('Mom Test render check:', { 
+          currentStep, 
+          currentIdea: !!currentIdea, 
+          cpsData: !!cpsData, 
+          lofaDataLength: lofaData.length 
+        });
+        return currentStep === 'mom-test' && currentIdea && cpsData && lofaData.length > 0;
+      })() && (
         <MomTestBuilder
           lofaData={lofaData}
           businessIdea={currentIdea}
