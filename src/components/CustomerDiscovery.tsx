@@ -76,7 +76,7 @@ React.useEffect(() => {
               (ev.place_hierarchies?.[0]
                 ? ev.place_hierarchies[0].slice(-1)[0]
                 : "TBA"),
-          link: link: `https://www.bing.com/search?q=${encodeURIComponent(ev.title)}`,
+          link: `https://www.bing.com/search?q=${encodeURIComponent(ev.title)}`,
 }));
 
         setEvents(filtered);
