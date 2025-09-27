@@ -178,9 +178,10 @@ const Index = () => {
           currentStep, 
           currentIdea: !!currentIdea, 
           cpsData: !!cpsData, 
-          lofaDataLength: lofaData.length 
+          lofaData: lofaData,
+          lofaDataLength: lofaData?.length || 0
         });
-        return currentStep === 'mom-test' && currentIdea && cpsData && lofaData.length > 0;
+        return currentStep === 'mom-test' && currentIdea && cpsData && lofaData && lofaData.length > 0;
       })() && (
         <MomTestBuilder
           lofaData={lofaData}
