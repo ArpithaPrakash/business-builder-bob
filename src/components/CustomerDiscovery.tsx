@@ -32,58 +32,58 @@ const [events, setEvents] = React.useState<any[]>([]);
 const [loading, setLoading] = React.useState(true);
 
 React.useEffect(() => {
-  const generateRelevantEvents = () => {
+  const fetchEvents = async () => {
     setLoading(true);
-    
-    // Generate relevant events based on business idea keywords
-    const keywords = getSearchKeywords();
-    const baseKeywords = keywords.split(' ').filter(word => word.length > 3);
-    
-    // Create realistic events based on the business idea
-    const eventTemplates = [
-      {
-        prefix: "Startup Networking:",
-        suffix: "Entrepreneurs Meetup",
-        location: "San Francisco, CA"
-      },
-      {
-        prefix: "Industry Conference:",
-        suffix: "Innovation Summit",
-        location: "Online"
-      },
-      {
-        prefix: "Workshop:",
-        suffix: "Business Development",
-        location: "New York, NY"
-      }
-    ];
-    
-    const generatedEvents = eventTemplates.map((template, index) => {
-      const relevantKeyword = baseKeywords[index] || keywords.split(' ')[0] || 'business';
-      const futureDates = [
-        new Date(Date.now() + (7 + index * 5) * 24 * 60 * 60 * 1000),
-        new Date(Date.now() + (14 + index * 7) * 24 * 60 * 60 * 1000),
-        new Date(Date.now() + (21 + index * 3) * 24 * 60 * 60 * 1000)
-      ];
+    try {
+      const keywords = encodeURIComponent(getSearchKeywords());
+      const apiKey = 'LSU54IL3KGABZFGYWD2R';
       
-      return {
-        title: `${template.prefix} ${relevantKeyword.charAt(0).toUpperCase() + relevantKeyword.slice(1)} ${template.suffix}`,
-        date: futureDates[index].toLocaleDateString('en-US', { 
-          month: 'short', 
-          day: 'numeric', 
-          year: 'numeric' 
-        }),
-        location: template.location,
-        link: `https://www.eventbrite.com/d/${template.location.toLowerCase().replace(/[^a-z]/g, '-')}/${encodeURIComponent(relevantKeyword)}-events/`
-      };
-    });
-    
-    setEvents(generatedEvents);
-    setLoading(false);
+      // Correct Eventbrite API endpoint - no trailing slash, token as query param
+      const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search?token=${apiKey}&q=${keywords}&expand=venue&location.within=50mi&location.address=San Francisco`;
+
+      const resp = await fetch(eventbriteUrl, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (!resp.ok) {
+        console.error("Eventbrite API error:", resp.status, resp.statusText);
+        const errorText = await resp.text();
+        console.error("Error details:", errorText);
+        setEvents([]);
+        return;
+      }
+
+      const data = await resp.json();
+      console.log("Eventbrite API success:", data);
+
+      if (data?.events?.length > 0) {
+        const newEvents = data.events.slice(0, 3).map((ev: any) => ({
+          title: ev.name?.text || "Untitled Event",
+          date: ev.start?.local ? new Date(ev.start.local).toLocaleDateString('en-US', { 
+            month: 'short', 
+            day: 'numeric', 
+            year: 'numeric' 
+          }) : "TBA",
+          location: ev.online_event ? "Online" : ev.venue?.address?.city || ev.venue?.name || "TBA",
+          link: ev.url,
+        }));
+        setEvents(newEvents);
+      } else {
+        console.log("No events found for keywords:", keywords);
+        setEvents([]);
+      }
+    } catch (err) {
+      console.error("Error fetching events:", err);
+      setEvents([]);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Small delay to show loading state
-  setTimeout(generateRelevantEvents, 500);
+  fetchEvents();
 }, [businessIdea]);
 
 
