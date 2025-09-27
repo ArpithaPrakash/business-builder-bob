@@ -10,7 +10,7 @@ interface CustomerDiscoveryProps {
 }
 
 const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscoveryProps) => {
-  // Extract keywords from business idea for search
+  \
   const getSearchKeywords = () => {
     const keywords = businessIdea.toLowerCase()
       .replace(/[^\w\s]/g, ' ')
@@ -62,7 +62,7 @@ React.useEffect(() => {
       let newEvents: any[] = [];
 
       if (data?.results?.length > 0) {
-        // 只保留有 url 的
+        
         const filtered = data.results.filter((ev: any) => ev.url);
 
         newEvents = filtered.slice(0, 3).map((ev: any) => ({
@@ -79,7 +79,7 @@ React.useEffect(() => {
         }));
       }
 
-      // ⚡ 保证至少 3 个（不足时补占位符）
+      
       while (newEvents.length < 3) {
         newEvents.push({
           title: "More events available on PredictHQ",
