@@ -36,15 +36,15 @@ React.useEffect(() => {
     setLoading(true);
     try {
       const keywords = encodeURIComponent(getSearchKeywords());
-      const apiKey = 'LSU54IL3KGABZFGYWD2R';
-      
-      // Correct Eventbrite API endpoint - no trailing slash, token as query param
-      const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search?token=${apiKey}&q=${keywords}&expand=venue&location.within=50mi&location.address=San Francisco`;
+      const apiKey = "YOUR_PRODUCTION_EVENTBRITE_KEY"; 
 
-      const resp = await fetch(eventbriteUrl, {
-        method: 'GET',
+      const url = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&expand=venue&location.address=San Francisco&location.within=50mi`;
+
+      const resp = await fetch(url, {
+        method: "GET",
         headers: {
-          'Content-Type': 'application/json',
+          "Authorization": `Bearer ${apiKey}`, 
+          "Content-Type": "application/json",
         },
       });
 
@@ -57,17 +57,21 @@ React.useEffect(() => {
       }
 
       const data = await resp.json();
-      console.log("Eventbrite API success:", data);
+      console.log("Eventbrite API response:", data);
 
       if (data?.events?.length > 0) {
         const newEvents = data.events.slice(0, 3).map((ev: any) => ({
           title: ev.name?.text || "Untitled Event",
-          date: ev.start?.local ? new Date(ev.start.local).toLocaleDateString('en-US', { 
-            month: 'short', 
-            day: 'numeric', 
-            year: 'numeric' 
-          }) : "TBA",
-          location: ev.online_event ? "Online" : ev.venue?.address?.city || ev.venue?.name || "TBA",
+          date: ev.start?.local
+            ? new Date(ev.start.local).toLocaleDateString("en-US", {
+                month: "short",
+                day: "numeric",
+                year: "numeric",
+              })
+            : "TBA",
+          location: ev.online_event
+            ? "Online"
+            : ev.venue?.address?.city || ev.venue?.name || "TBA",
           link: ev.url,
         }));
         setEvents(newEvents);
@@ -85,7 +89,6 @@ React.useEffect(() => {
 
   fetchEvents();
 }, [businessIdea]);
-
 
   return (
     <div className="min-h-screen blueprint-bg p-4 md:p-8">
