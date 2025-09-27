@@ -38,14 +38,13 @@ React.useEffect(() => {
       const keywords = encodeURIComponent(getSearchKeywords());
       const apiKey = "JQ4FjN07yjrgpRgfzrEjrAv-tOWCfadwNialxZBe"; 
 
-      // PredictHQ API endpoint
-      const url = `https://api.predicthq.com/v1/events/?q=${keywords}&limit=3&country=US&sort=start`;
+      const url = `https://api.predicthq.com/v1/events/?q=${keywords}&limit=20&country=US&sort=start`;
 
       const resp = await fetch(url, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${apiKey}`,
-          "Accept": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+          Accept: "application/json",
         },
       });
 
@@ -60,8 +59,13 @@ React.useEffect(() => {
       const data = await resp.json();
       console.log("PredictHQ API response:", data);
 
+      let newEvents: any[] = [];
+
       if (data?.results?.length > 0) {
-        const newEvents = data.results.map((ev: any) => ({
+        // 只保留有 url 的
+        const filtered = data.results.filter((ev: any) => ev.url);
+
+        newEvents = filtered.slice(0, 3).map((ev: any) => ({
           title: ev.title || "Untitled Event",
           date: ev.start
             ? new Date(ev.start).toLocaleDateString("en-US", {
@@ -70,14 +74,22 @@ React.useEffect(() => {
                 year: "numeric",
               })
             : "TBA",
-          location: ev.entities?.[0]?.name || ev.place_hierarchies?.[0]?.join(", ") || "TBA",
-          link: ev.url || "https://www.predicthq.com", // 有些 PredictHQ 事件可能没有直接 URL
+          location: ev.entities?.[0]?.name || ev.labels?.[0] || "TBA",
+          link: ev.url,
         }));
-        setEvents(newEvents);
-      } else {
-        console.log("No events found for keywords:", keywords);
-        setEvents([]);
       }
+
+     
+      while (newEvents.length < 3) {
+        newEvents.push({
+          title: "More events available on PredictHQ",
+          date: "TBA",
+          location: "See PredictHQ",
+          link: `https://www.predicthq.com/`,
+        });
+      }
+
+      setEvents(newEvents);
     } catch (err) {
       console.error("Error fetching PredictHQ events:", err);
       setEvents([]);
