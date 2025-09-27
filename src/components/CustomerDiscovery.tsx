@@ -27,56 +27,26 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
     return `https://www.linkedin.com/search/results/content/?keywords=${encodeURIComponent(keywords)}&origin=FACETED_SEARCH`;
   };
 
-  // Real events with actual links to event platforms
-  const [events, setEvents] = React.useState<any[]>([]);
-  const [loading, setLoading] = React.useState(true);
   React.useEffect(() => {
-    const fetchEvents = async () => {
-      setLoading(true);
-      try {
+  const fetchEvents = async () => {
+    setLoading(true);
+    try {
       const keywords = encodeURIComponent(getSearchKeywords());
 
-      // Eventbrite API (real)
-      const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&token=YOUR_EVENTBRITE_API_KEY`;
+      const eventbriteUrl = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&sort_by=date&token=LSU54IL3KGABZFGYWD2R`;
       const eventbriteResp = await fetch(eventbriteUrl).then(r => r.json()).catch(() => null);
 
-      const newEvents: any[] = [];
-
-      // Meetup placeholder (link to search results)
-      newEvents.push({
-        title: "Meetup Search Result",
-        date: "See website",
-        location: "San Francisco",
-        link: `https://www.meetup.com/find/?keywords=${keywords}&location=San%20Francisco`,
-      });
-
-      // Luma placeholder (link to search results)
-      newEvents.push({
-        title: "Luma Discovery Event",
-        date: "See website",
-        location: "Online",
-        link: `https://lu.ma/discover?q=${keywords}`,
-      });
-
-      // Eventbrite (real API, fallback if empty)
       if (eventbriteResp?.events?.length) {
-        const ev = eventbriteResp.events[0];
-        newEvents.push({
+        const newEvents = eventbriteResp.events.slice(0, 3).map((ev: any) => ({
           title: ev.name.text,
           date: new Date(ev.start.local).toLocaleDateString(),
           location: ev.online_event ? "Online" : ev.venue?.address?.city || "TBA",
           link: ev.url,
-        });
+        }));
+        setEvents(newEvents);
       } else {
-        newEvents.push({
-          title: "Eventbrite Search Result",
-          date: "See website",
-          location: "Online",
-          link: `https://www.eventbrite.com/d/online/${keywords}-events/`,
-        });
+        setEvents([]);
       }
-
-      setEvents(newEvents);
     } catch (err) {
       console.error("Error fetching events:", err);
       setEvents([]);
