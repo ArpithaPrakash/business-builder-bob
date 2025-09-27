@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, ExternalLink, Calendar, MapPin, Users } from "lucide-react";
@@ -10,6 +10,14 @@ interface CustomerDiscoveryProps {
 }
 
 const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscoveryProps) => {
+  const [loading, setLoading] = useState(false);
+  const [events, setEvents] = useState<Array<{
+    title: string;
+    date: string;
+    location: string;
+    link: string;
+  }>>([]);
+
   // Extract keywords from business idea for search
   const getSearchKeywords = () => {
     const keywords = businessIdea.toLowerCase()
