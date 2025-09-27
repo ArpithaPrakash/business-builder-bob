@@ -60,14 +60,13 @@ React.useEffect(() => {
       let newEvents: any[] = [];
 
       if (data?.results?.length > 0) {
+        // ✅ keep only events with title + start
         newEvents = data.results
-          .slice(0, 3) // take first 3 without over-filtering
-          .map((ev: any) => {
-            // Title (always exists)
-            const title = ev.title || "Untitled Event";
-
-            // Date (use start, fallback TBA)
-            const date = ev.start
+          .filter((ev: any) => ev.title && ev.start)
+          .slice(0, 3)
+          .map((ev: any) => ({
+            title: ev.title,
+            date: ev.start
               ? new Date(ev.start).toLocaleString("en-US", {
                   weekday: "short",
                   month: "short",
@@ -76,27 +75,16 @@ React.useEffect(() => {
                   hour: "2-digit",
                   minute: "2-digit",
                 })
-              : "TBA";
-
-            // Location (fallback to hierarchy -> lat/lon -> TBA)
-            const location =
+              : "TBA",
+            location:
               ev.entities?.[0]?.name ||
-              (ev.place_hierarchies?.[0]
-                ? ev.place_hierarchies[0].slice(0, 2).join(", ") // e.g. "San Francisco, US"
-                : ev.location
-                ? `${ev.location.lat}, ${ev.location.lon}`
-                : "TBA");
-
-            // Link (official URL, else Google search)
-            const link =
-              ev.url ||
-              `https://www.google.com/search?q=${encodeURIComponent(title)}`;
-
-            return { title, date, location, link };
-          });
+              `${ev.location?.lat}, ${ev.location?.lon}` ||
+              "TBA",
+            link: ev.url || `https://www.google.com/search?q=${encodeURIComponent(ev.title)}`,
+          }));
       }
 
-      // Ensure 3 slots
+      // fill placeholders if < 3
       while (newEvents.length < 3) {
         newEvents.push({
           title: "More events available on PredictHQ",
@@ -117,6 +105,7 @@ React.useEffect(() => {
 
   fetchEvents();
 }, [businessIdea]);
+
 
 
   return (
