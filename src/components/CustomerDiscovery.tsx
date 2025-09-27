@@ -182,33 +182,47 @@ React.useEffect(() => {
                 Here are the top 3 relevant upcoming events you can attend.
               </p>
               
-              <div className="space-y-3">
-                {mockEvents.map((event, index) => (
-                  <div key={index} className="bg-muted/30 p-4 rounded-lg border border-border/50 hover:border-construction-green/30 transition-colors duration-200">
-                    <div className="flex justify-between items-start mb-2">
-                      <h4 className="font-medium text-foreground">{event.title}</h4>
-                      <Button 
-                        variant="ghost" 
-                        size="sm" 
-                        className="text-construction-blue hover:text-construction-blue/80 p-1"
-                        onClick={() => window.open(event.link, '_blank')}
-                      >
-                        <ExternalLink className="w-4 h-4" />
-                      </Button>
-                    </div>
-                    <div className="flex items-center gap-4 text-sm text-muted-foreground">
-                      <div className="flex items-center gap-1">
-                        <Calendar className="w-4 h-4" />
-                        {event.date}
-                      </div>
-                      <div className="flex items-center gap-1">
-                        <MapPin className="w-4 h-4" />
-                        {event.location}
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+             <div className="space-y-3">
+  {loading ? (
+    <p className="text-sm text-muted-foreground text-center">
+      Loading events...
+    </p>
+  ) : events.length === 0 ? (
+    <p className="text-sm text-muted-foreground text-center">
+      No relevant events found. Try again later.
+    </p>
+  ) : (
+    events.map((event, index) => (
+      <div
+        key={index}
+        className="bg-muted/30 p-4 rounded-lg border border-border/50 hover:border-construction-green/30 transition-colors duration-200"
+      >
+        <div className="flex justify-between items-start mb-2">
+          <h4 className="font-medium text-foreground">{event.title}</h4>
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-construction-blue hover:text-construction-blue/80 p-1"
+            onClick={() => window.open(event.link, "_blank")}
+          >
+            <ExternalLink className="w-4 h-4" />
+          </Button>
+        </div>
+        <div className="flex items-center gap-4 text-sm text-muted-foreground">
+          <div className="flex items-center gap-1">
+            <Calendar className="w-4 h-4" />
+            {event.date}
+          </div>
+          <div className="flex items-center gap-1">
+            <MapPin className="w-4 h-4" />
+            {event.location}
+          </div>
+        </div>
+      </div>
+    ))
+  )}
+</div>
+
               
               <p className="text-sm text-muted-foreground text-center">
                 Attending events is a great way to validate your idea in person.
