@@ -36,20 +36,21 @@ React.useEffect(() => {
     setLoading(true);
     try {
       const keywords = encodeURIComponent(getSearchKeywords());
-      const apiKey = "YOUR_PRODUCTION_EVENTBRITE_KEY"; 
+      const apiKey = "JQ4FjN07yjrgpRgfzrEjrAv-tOWCfadwNialxZBe"; 
 
-      const url = `https://www.eventbriteapi.com/v3/events/search/?q=${keywords}&expand=venue&location.address=San Francisco&location.within=50mi`;
+      // PredictHQ API endpoint
+      const url = `https://api.predicthq.com/v1/events/?q=${keywords}&limit=3&country=US&sort=start`;
 
       const resp = await fetch(url, {
         method: "GET",
         headers: {
-          "Authorization": `Bearer ${apiKey}`, 
-          "Content-Type": "application/json",
+          "Authorization": `Bearer ${apiKey}`,
+          "Accept": "application/json",
         },
       });
 
       if (!resp.ok) {
-        console.error("Eventbrite API error:", resp.status, resp.statusText);
+        console.error("PredictHQ API error:", resp.status, resp.statusText);
         const errorText = await resp.text();
         console.error("Error details:", errorText);
         setEvents([]);
@@ -57,22 +58,20 @@ React.useEffect(() => {
       }
 
       const data = await resp.json();
-      console.log("Eventbrite API response:", data);
+      console.log("PredictHQ API response:", data);
 
-      if (data?.events?.length > 0) {
-        const newEvents = data.events.slice(0, 3).map((ev: any) => ({
-          title: ev.name?.text || "Untitled Event",
-          date: ev.start?.local
-            ? new Date(ev.start.local).toLocaleDateString("en-US", {
+      if (data?.results?.length > 0) {
+        const newEvents = data.results.map((ev: any) => ({
+          title: ev.title || "Untitled Event",
+          date: ev.start
+            ? new Date(ev.start).toLocaleDateString("en-US", {
                 month: "short",
                 day: "numeric",
                 year: "numeric",
               })
             : "TBA",
-          location: ev.online_event
-            ? "Online"
-            : ev.venue?.address?.city || ev.venue?.name || "TBA",
-          link: ev.url,
+          location: ev.entities?.[0]?.name || ev.place_hierarchies?.[0]?.join(", ") || "TBA",
+          link: ev.url || "https://www.predicthq.com", // 有些 PredictHQ 事件可能没有直接 URL
         }));
         setEvents(newEvents);
       } else {
@@ -80,7 +79,7 @@ React.useEffect(() => {
         setEvents([]);
       }
     } catch (err) {
-      console.error("Error fetching events:", err);
+      console.error("Error fetching PredictHQ events:", err);
       setEvents([]);
     } finally {
       setLoading(false);
@@ -89,6 +88,7 @@ React.useEffect(() => {
 
   fetchEvents();
 }, [businessIdea]);
+
 
   return (
     <div className="min-h-screen blueprint-bg p-4 md:p-8">
