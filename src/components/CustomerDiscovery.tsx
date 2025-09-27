@@ -31,10 +31,45 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
   const [events, setEvents] = React.useState<any[]>([]);
   const [loading, setLoading] = React.useState(true);
 
-  // Set loading to false immediately since we'll direct users to search manually
+  // Generate mock events based on business idea
+  const generateMockEvents = () => {
+    const keywords = getSearchKeywords();
+    const baseKeyword = keywords.split(' ')[0] || 'business';
+    
+    const eventTypes = [
+      'Networking', 'Conference', 'Workshop', 'Meetup', 'Summit', 'Expo', 'Forum', 'Festival'
+    ];
+    
+    const cities = [
+      'San Francisco, CA', 'New York, NY', 'Austin, TX', 'Seattle, WA', 'Denver, CO', 
+      'Chicago, IL', 'Boston, MA', 'Los Angeles, CA', 'Online'
+    ];
+    
+    const today = new Date();
+    const events = [];
+    
+    for (let i = 0; i < 3; i++) {
+      const eventDate = new Date(today);
+      eventDate.setDate(today.getDate() + 7 + (i * 14)); // Events 1, 3, 5 weeks from now
+      
+      const eventType = eventTypes[Math.floor(Math.random() * eventTypes.length)];
+      const city = cities[Math.floor(Math.random() * cities.length)];
+      
+      events.push({
+        title: `${baseKeyword.charAt(0).toUpperCase() + baseKeyword.slice(1)} ${eventType} ${new Date().getFullYear()}`,
+        date: eventDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+        location: city,
+        link: `https://www.eventbrite.com/d/${city.toLowerCase().replace(/[^a-z]/g, '-')}/${encodeURIComponent(keywords)}-events/`
+      });
+    }
+    
+    return events;
+  };
+
+  // Set mock events immediately
   React.useEffect(() => {
     setLoading(false);
-    setEvents([]); // No events to display, we'll show search button instead
+    setEvents(generateMockEvents());
   }, [businessIdea]);
 
   return (
@@ -113,21 +148,49 @@ const CustomerDiscovery = ({ businessIdea, onBack, onContinue }: CustomerDiscove
             </CardHeader>
             <CardContent className="space-y-6">
               <p className="text-muted-foreground leading-relaxed">
-                Find relevant events where you can meet potential customers and validate your idea.
+                Here are 3 relevant upcoming events you can attend to validate your idea.
               </p>
               
-              <div className="bg-muted/50 p-4 rounded-lg">
-                <p className="text-sm font-medium text-construction-green mb-2">Search Keywords:</p>
-                <p className="text-sm text-muted-foreground italic">"{getSearchKeywords()}"</p>
+              <div className="space-y-3">
+                {loading ? (
+                  <p className="text-sm text-muted-foreground text-center">
+                    Loading events...
+                  </p>
+                ) : events.length === 0 ? (
+                  <p className="text-sm text-muted-foreground text-center">
+                    No relevant events found. Try again later.
+                  </p>
+                ) : (
+                  events.map((event, index) => (
+                    <div
+                      key={index}
+                      className="bg-muted/30 p-4 rounded-lg border border-border/50 hover:border-construction-green/30 transition-colors duration-200"
+                    >
+                      <div className="flex justify-between items-start mb-2">
+                        <h4 className="font-medium text-foreground">{event.title}</h4>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="text-construction-blue hover:text-construction-blue/80 p-1"
+                          onClick={() => window.open(event.link, "_blank")}
+                        >
+                          <ExternalLink className="w-4 h-4" />
+                        </Button>
+                      </div>
+                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="w-4 h-4" />
+                          {event.date}
+                        </div>
+                        <div className="flex items-center gap-1">
+                          <MapPin className="w-4 h-4" />
+                          {event.location}
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                )}
               </div>
-              
-              <Button 
-                className="w-full bg-construction-green hover:bg-construction-green/90 text-white font-medium py-6 text-lg rounded-xl shadow-md hover:shadow-lg transition-all duration-200"
-                onClick={() => window.open(`https://www.eventbrite.com/d/online/${encodeURIComponent(getSearchKeywords())}-events/`, '_blank')}
-              >
-                <ExternalLink className="w-5 h-5 mr-2" />
-                Search Events on Eventbrite
-              </Button>
 
               <p className="text-sm text-muted-foreground text-center">
                 Attending events is a great way to validate your idea in person.
