@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ArrowLeft, MessageSquare, Copy, CheckCircle, Users, Download } from 'lucide-react';
 import { toast } from 'sonner';
+import { supabase } from '@/integrations/supabase/client';
 
 interface MomTestBuilderProps {
   lofaData: string[];
@@ -12,9 +13,19 @@ interface MomTestBuilderProps {
   onComplete: () => void;
 }
 
+interface MomTestQuestion {
+  q: string;
+  assumption_tag: string;
+  why_it_works: string;
+  signal_to_listen_for: string;
+  priority: number;
+}
+
 interface Hypothesis {
-  statement: string;
-  questions: string[];
+  assumption_category: string;
+  hypothesis: string;
+  audience: string;
+  questions: MomTestQuestion[];
 }
 
 const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }: MomTestBuilderProps) => {
@@ -30,21 +41,33 @@ const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }:
     setIsGenerating(true);
     
     try {
-      // Convert LOFAs to hypotheses and generate Mom Test questions
       const generatedHypotheses: Hypothesis[] = [];
       
-      lofaData.forEach((lofa, index) => {
-        // Convert LOFA to hypothesis format
-        const hypothesis = convertLOFAToHypothesis(lofa, cpsData);
+      // Generate questions for each LOFA
+      for (const lofa of lofaData) {
+        const { assumption_category, hypothesis } = parseLOFA(lofa);
         
-        // Generate Mom Test questions for each hypothesis
-        const questions = generateQuestionsForHypothesis(lofa, cpsData);
-        
-        generatedHypotheses.push({
-          statement: hypothesis,
-          questions: questions
+        const { data, error } = await supabase.functions.invoke('generate-mom-test', {
+          body: {
+            idea: businessIdea,
+            passion: (cpsData as any).passion || '',
+            qualified: (cpsData as any).qualified || '',
+            audience: cpsData.customer,
+            assumption_category,
+            hypothesis,
+            context: `${cpsData.problem} - ${cpsData.solution}`
+          }
         });
-      });
+
+        if (error) {
+          console.error('Error calling generate-mom-test:', error);
+          throw new Error(error.message);
+        }
+
+        if (data) {
+          generatedHypotheses.push(data);
+        }
+      }
       
       setHypotheses(generatedHypotheses);
     } catch (error) {
@@ -55,64 +78,34 @@ const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }:
     }
   };
 
-  const convertLOFAToHypothesis = (lofa: string, cpsData: any): string => {
-    // Extract key elements from LOFA and convert to hypothesis format
-    if (lofa.includes('willing to pay')) {
-      return `We believe that ${cpsData.customer} will pay for our solution because they experience significant pain from ${cpsData.problem.toLowerCase()}.`;
-    } else if (lofa.includes('demand') || lofa.includes('market')) {
-      return `We believe that there is sufficient market demand for our solution among ${cpsData.customer} in our target area.`;
-    } else if (lofa.includes('differentiate') || lofa.includes('unique')) {
-      return `We believe that our unique approach to ${cpsData.solution.toLowerCase()} will be compelling enough for ${cpsData.customer} to choose us over alternatives.`;
-    } else {
-      return `We believe that ${cpsData.customer} will adopt our solution because ${lofa.toLowerCase()}.`;
+  const parseLOFA = (lofa: string): { assumption_category: string; hypothesis: string } => {
+    // Extract category and hypothesis from LOFA string
+    let category = 'Demand';
+    
+    if (lofa.includes('pay') || lofa.includes('price') || lofa.includes('monetiz')) {
+      category = 'Monetization';
+    } else if (lofa.includes('value') || lofa.includes('benefit')) {
+      category = 'Value';
+    } else if (lofa.includes('acquire') || lofa.includes('channel') || lofa.includes('reach')) {
+      category = 'Acquisition/Channel';
+    } else if (lofa.includes('retain') || lofa.includes('keep') || lofa.includes('return')) {
+      category = 'Retention';
+    } else if (lofa.includes('grow') || lofa.includes('referral') || lofa.includes('spread')) {
+      category = 'Growth/Referral';
+    } else if (lofa.includes('feasib') || lofa.includes('workflow') || lofa.includes('implement')) {
+      category = 'Feasibility/Workflow';
     }
+
+    // Clean up the hypothesis text
+    const hypothesis = lofa.replace(/^\[LOFA #\d+\]:\s*/, '').trim();
+
+    return { assumption_category: category, hypothesis };
   };
 
-  const generateQuestionsForHypothesis = (lofa: string, cpsData: any): string[] => {
-    const questions: string[] = [];
-    
-    if (lofa.includes('willing to pay') || lofa.includes('price')) {
-      questions.push(
-        "Can you walk me through the last time you spent money to solve a similar problem?",
-        "What's the most expensive solution you've tried for this type of issue?",
-        "Tell me about a time when you decided NOT to buy something because of the price."
-      );
-    } else if (lofa.includes('demand') || lofa.includes('customer base') || lofa.includes('market')) {
-      questions.push(
-        "How often do you currently deal with this type of problem?",
-        "What do you do right now when this problem comes up?",
-        "Who else do you know that has this same challenge?"
-      );
-    } else if (lofa.includes('differentiate') || lofa.includes('unique') || lofa.includes('attractive')) {
-      questions.push(
-        "What solutions have you tried before for this problem?",
-        "What made you stop using your previous solution?",
-        "Can you describe what would make the perfect solution for you?"
-      );
-    } else {
-      // Default questions based on problem/solution
-      questions.push(
-        `Tell me about the last time you experienced ${extractProblemKeyword(cpsData.problem)}.`,
-        "What's your current process for handling this situation?",
-        "Have you ever tried to find a solution for this? What happened?"
-      );
-    }
-    
-    return questions;
-  };
-
-  const extractProblemKeyword = (problem: string): string => {
-    // Extract a key phrase from the problem description
-    const words = problem.toLowerCase().split(' ');
-    if (words.length > 3) {
-      return words.slice(0, 4).join(' ');
-    }
-    return problem.toLowerCase();
-  };
 
   const copyQuestions = async (hypothesisIndex: number) => {
     const hypothesis = hypotheses[hypothesisIndex];
-    const text = `Hypothesis ${hypothesisIndex + 1}:\n${hypothesis.statement}\n\nMom-Test Questions:\n${hypothesis.questions.map(q => `- ${q}`).join('\n')}`;
+    const text = `${hypothesis.assumption_category} - ${hypothesis.hypothesis}\n\nMom-Test Questions:\n${hypothesis.questions.map((q, i) => `${i + 1}. ${q.q}`).join('\n')}`;
     
     try {
       await navigator.clipboard.writeText(text);
@@ -126,10 +119,10 @@ const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }:
 
   const downloadAllQuestions = () => {
     const allText = hypotheses.map((hypothesis, index) => 
-      `Hypothesis ${index + 1}:\n${hypothesis.statement}\n\nMom-Test Questions:\n${hypothesis.questions.map(q => `- ${q}`).join('\n')}\n\n`
-    ).join('');
+      `${hypothesis.assumption_category} - ${hypothesis.hypothesis}\n\nMom-Test Questions:\n${hypothesis.questions.map((q, i) => `${i + 1}. ${q.q}\n   Why it works: ${q.why_it_works}\n   Listen for: ${q.signal_to_listen_for}\n   Priority: ${q.priority}`).join('\n\n')}\n\n`
+    ).join('\n\n---\n\n');
     
-    const finalText = `Interview Guide for: ${businessIdea}\n\n${allText}`;
+    const finalText = `Interview Guide for: ${businessIdea}\nTarget Audience: ${cpsData.customer}\n\n${allText}`;
     
     const blob = new Blob([finalText], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
@@ -182,19 +175,24 @@ const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }:
               <CardContent className="py-12 text-center">
                 <MessageSquare className="w-16 h-16 mx-auto text-construction-orange animate-pulse mb-4" />
                 <p className="text-construction-orange font-medium">
-                  Generating Mom Test questions...
+                  Generating AI-powered Mom Test questions...
                 </p>
               </CardContent>
             </Card>
           ) : (
-            <div className="space-y-6">
+            <div className="space-y-6 pb-32">
               {hypotheses.map((hypothesis, index) => (
                 <Card key={index} className="border-2 border-construction-green/30">
                   <CardHeader className="pb-4">
                     <div className="flex justify-between items-start">
-                      <CardTitle className="text-construction-green">
-                        Hypothesis {index + 1}
-                      </CardTitle>
+                      <div>
+                        <CardTitle className="text-construction-green mb-2">
+                          {hypothesis.assumption_category}
+                        </CardTitle>
+                        <p className="text-sm text-muted-foreground">
+                          Target: {hypothesis.audience}
+                        </p>
+                      </div>
                       <Button
                         variant="outline"
                         size="sm"
@@ -212,21 +210,37 @@ const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }:
                   </CardHeader>
                   <CardContent className="space-y-6">
                     <div>
-                      <h4 className="font-semibold mb-2 text-construction-orange">Hypothesis Statement:</h4>
+                      <h4 className="font-semibold mb-2 text-construction-orange">Hypothesis:</h4>
                       <p className="text-muted-foreground italic bg-muted/50 p-3 rounded-lg">
-                        "{hypothesis.statement}"
+                        "{hypothesis.hypothesis}"
                       </p>
                     </div>
                     
                     <div>
-                      <h4 className="font-semibold mb-3 text-construction-orange">Mom-Test Questions:</h4>
-                      <div className="space-y-3">
+                      <h4 className="font-semibold mb-4 text-construction-orange">Mom-Test Questions:</h4>
+                      <div className="space-y-4">
                         {hypothesis.questions.map((question, qIndex) => (
-                          <div key={qIndex} className="flex gap-3">
-                            <span className="text-construction-yellow font-bold min-w-[24px]">
-                              {qIndex + 1}.
-                            </span>
-                            <p className="text-foreground">{question}</p>
+                          <div key={qIndex} className="border-l-4 border-construction-yellow pl-4 py-2">
+                            <div className="flex gap-3 mb-2">
+                              <span className="text-construction-yellow font-bold min-w-[24px]">
+                                {qIndex + 1}.
+                              </span>
+                              <p className="text-foreground font-medium">{question.q}</p>
+                            </div>
+                            <div className="ml-8 space-y-1 text-sm text-muted-foreground">
+                              <p className="flex items-start gap-2">
+                                <span className="font-semibold text-construction-green">✓</span>
+                                <span><strong>Why it works:</strong> {question.why_it_works}</span>
+                              </p>
+                              <p className="flex items-start gap-2">
+                                <span className="font-semibold text-construction-orange">👂</span>
+                                <span><strong>Listen for:</strong> {question.signal_to_listen_for}</span>
+                              </p>
+                              <p className="flex items-center gap-2">
+                                <span className="font-semibold">⭐</span>
+                                <span><strong>Priority:</strong> {question.priority}/3</span>
+                              </p>
+                            </div>
                           </div>
                         ))}
                       </div>
@@ -261,25 +275,40 @@ const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }:
           )}
         </div>
 
-        {/* Navigation Buttons */}
-        <div className="max-w-4xl mx-auto mt-12 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <Button
-            variant="outline"
-            onClick={onBack}
-            className="flex items-center gap-2 text-base px-6 py-3"
-          >
-            <ArrowLeft className="w-5 h-5" />
-            Back to LOFA Builder
-          </Button>
-          
-          <Button
-            onClick={onComplete}
-            className="flex items-center gap-2 text-base px-8 py-3 bg-construction-yellow text-construction-orange hover:bg-construction-yellow/90"
-          >
-            Complete Validation Journey
-            <CheckCircle className="w-5 h-5" />
-          </Button>
-        </div>
+        {/* Sticky Footer CTA */}
+        {hypotheses.length > 0 && (
+          <div className="fixed bottom-0 left-0 right-0 bg-construction-orange/95 backdrop-blur-sm border-t-4 border-construction-yellow shadow-2xl z-50">
+            <div className="container mx-auto px-4 py-6">
+              <div className="max-w-4xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+                <div className="text-center sm:text-left">
+                  <h3 className="text-white font-bold text-lg mb-1">
+                    Ready to validate your assumptions?
+                  </h3>
+                  <p className="text-white/90 text-sm">
+                    Connect with real {cpsData.customer} to test these questions
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={onBack}
+                    className="bg-white text-construction-orange hover:bg-white/90"
+                  >
+                    <ArrowLeft className="w-4 h-4 mr-2" />
+                    Back
+                  </Button>
+                  <Button
+                    onClick={onComplete}
+                    className="bg-construction-yellow text-construction-orange hover:bg-construction-yellow/90 font-bold px-8"
+                  >
+                    <Users className="w-5 h-5 mr-2" />
+                    Let's get you connected to people
+                  </Button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
