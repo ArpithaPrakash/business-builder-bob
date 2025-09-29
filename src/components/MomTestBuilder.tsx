@@ -26,12 +26,15 @@ interface Hypothesis {
   hypothesis: string;
   audience: string;
   questions: MomTestQuestion[];
+  _warning?: string;
+  _errors?: string[];
 }
 
 const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }: MomTestBuilderProps) => {
   const [hypotheses, setHypotheses] = useState<Hypothesis[]>([]);
   const [isGenerating, setIsGenerating] = useState(false);
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
+  const [hasOfflineBackup, setHasOfflineBackup] = useState(false);
 
   useEffect(() => {
     generateMomTestQuestions();
@@ -66,6 +69,10 @@ const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }:
 
         if (data) {
           generatedHypotheses.push(data);
+          // Check if any response used offline backup
+          if (data._warning) {
+            setHasOfflineBackup(true);
+          }
         }
       }
       
@@ -149,6 +156,26 @@ const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }:
         </div>
 
         <div className="max-w-4xl mx-auto space-y-8">
+          {/* Offline Backup Warning */}
+          {hasOfflineBackup && (
+            <Card className="border-2 border-yellow-500/50 bg-yellow-50/50 dark:bg-yellow-950/20">
+              <CardContent className="py-4">
+                <div className="flex items-start gap-3">
+                  <span className="text-2xl">⚠️</span>
+                  <div>
+                    <h3 className="font-semibold text-yellow-800 dark:text-yellow-200 mb-1">
+                      Using Offline Backup
+                    </h3>
+                    <p className="text-sm text-yellow-700 dark:text-yellow-300">
+                      LLM providers are currently unavailable. Questions generated using deterministic backup logic.
+                      They still follow Mom Test principles but may be less tailored to your specific context.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {/* Business Context */}
           <Card className="border-2 border-construction-yellow/30">
             <CardHeader>
