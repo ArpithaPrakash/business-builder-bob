@@ -21,13 +21,22 @@ Deno.serve(async (req) => {
     }
 
     // Use Lovable AI to analyze the LinkedIn screenshot
-    const supabase = createClient(
-      Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? ''
-    )
+    const LOVABLE_API_KEY = Deno.env.get('LOVABLE_API_KEY')
+    if (!LOVABLE_API_KEY) {
+      console.error('LOVABLE_API_KEY is not configured')
+      return new Response(
+        JSON.stringify({ error: 'API key not configured', name: 'Friend' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
 
-    const { data, error } = await supabase.functions.invoke('ai', {
-      body: {
+    const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${LOVABLE_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
         model: 'google/gemini-2.5-flash',
         messages: [
           {
@@ -46,17 +55,19 @@ Deno.serve(async (req) => {
             ]
           }
         ]
-      }
+      })
     })
 
-    if (error) {
-      console.error('AI function error:', error)
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('AI Gateway error:', response.status, errorText)
       return new Response(
         JSON.stringify({ error: 'Failed to analyze image', name: 'Friend' }),
         { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       )
     }
 
+    const data = await response.json()
     const extractedName = data?.choices?.[0]?.message?.content?.trim() || 'Friend'
 
     return new Response(
