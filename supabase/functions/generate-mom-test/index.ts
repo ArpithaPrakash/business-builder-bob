@@ -8,6 +8,7 @@ const corsHeaders = {
 
 // Log available providers at boot
 console.log("🔑 Available API providers:", {
+  lovable: !!Deno.env.get('LOVABLE_API_KEY'),
   gemini: !!Deno.env.get('GEMINI_API_KEY'),
   openai: !!Deno.env.get('OPENAI_API_KEY'),
   together: !!Deno.env.get('TOGETHER_API_KEY'),
@@ -77,12 +78,42 @@ Rules:
 }`;
 
 // LLM Provider Functions
+async function callLovableAI(prompt: string): Promise<string> {
+  const key = Deno.env.get('LOVABLE_API_KEY');
+  if (!key) throw new Error("Lovable AI key missing");
+  
+  const res = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`
+    },
+    body: JSON.stringify({
+      model: 'google/gemini-2.5-flash',
+      messages: [
+        { role: 'system', content: 'You respond ONLY with JSON matching the requested schema.' },
+        { role: 'user', content: prompt }
+      ]
+    })
+  });
+  
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Lovable AI HTTP ${res.status}: ${errorText}`);
+  }
+  
+  const data = await res.json();
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text) throw new Error("Lovable AI empty response");
+  return text;
+}
+
 async function callGemini(prompt: string): Promise<string> {
   const key = Deno.env.get('GEMINI_API_KEY');
   if (!key) throw new Error("Gemini key missing");
   
   const res = await fetch(
-    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${key}`,
+    `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`,
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -205,11 +236,10 @@ function offlineBackup(i: Inputs): Output {
   ];
   
   const who = i.audience || "your typical user";
-  const ctx = i.context ? ` ${i.context}` : "";
   
   const questions: Question[] = [
     {
-      q: `Tell me about the last time you faced this problem${ctx}.`,
+      q: `Tell me about the last time you faced this problem.`,
       assumption_tag: tags[0],
       why_it_works: "Past behavior, specific, neutral.",
       signal_to_listen_for: "Concrete recency/frequency, real spend, named tools/alternatives.",
@@ -312,6 +342,7 @@ function parseJSON(text: string): Output {
 async function generateMomTest(inputs: Inputs): Promise<Output> {
   const prompt = buildPrompt(inputs);
   const providers = [
+    { name: 'Lovable AI', call: () => callLovableAI(prompt) },
     { name: 'Gemini', call: () => callGemini(prompt) },
     { name: 'OpenAI', call: () => callOpenAI(prompt) },
     { name: 'Together', call: () => callTogether(prompt) },
