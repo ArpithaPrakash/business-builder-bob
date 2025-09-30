@@ -312,7 +312,7 @@ const MomTestBuilder = ({ lofaData, businessIdea, cpsData, onBack, onComplete }:
                     Ready to validate your assumptions?
                   </h3>
                   <p className="text-white/90 text-sm">
-                    Connect with real {cpsData.customer} to test these questions
+                    Connect with your target customers to test these questions
                   </p>
                 </div>
                 <div className="flex gap-3">
