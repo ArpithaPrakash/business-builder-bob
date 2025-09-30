@@ -8,6 +8,7 @@ const corsHeaders = {
 
 // Log available providers at boot
 console.log("Leap of Faith providers active:", {
+  lovable: !!Deno.env.get('LOVABLE_API_KEY'),
   gemini: !!Deno.env.get('GEMINI_API_KEY'),
   openai: !!Deno.env.get('OPENAI_API_KEY'),
   together: !!Deno.env.get('TOGETHER_API_KEY'),
@@ -94,6 +95,35 @@ Convert each Leap of Faith Assumption into testable hypotheses using the exact f
 
     return { system, user };
   }
+}
+
+async function callLovableAI(system: string, user: string): Promise<string> {
+  const key = Deno.env.get('LOVABLE_API_KEY');
+  if (!key) throw new Error("Lovable AI key missing");
+  
+  const res = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${key}`
+    },
+    body: JSON.stringify({
+      model: 'google/gemini-2.5-flash',
+      messages: [
+        { role: 'system', content: system },
+        { role: 'user', content: user }
+      ]
+    })
+  });
+  
+  if (!res.ok) {
+    const errorText = await res.text();
+    throw new Error(`Lovable AI HTTP ${res.status}: ${errorText}`);
+  }
+  const data = await res.json();
+  const text = data?.choices?.[0]?.message?.content;
+  if (!text) throw new Error("Lovable AI empty response");
+  return text;
 }
 
 async function callGemini(system: string, user: string): Promise<string> {
@@ -207,12 +237,23 @@ async function callGroq(system: string, user: string): Promise<string> {
 }
 
 function offlineBackup(inputs: Inputs): Output {
+  // Extract key segments from long descriptions
+  const extractSegment = (text: string, maxWords: number = 8): string => {
+    const words = text.trim().split(/\s+/);
+    if (words.length <= maxWords) return text;
+    return words.slice(0, maxWords).join(' ') + '...';
+  };
+
+  const customerSegment = extractSegment(inputs.customer);
+  const problemCore = extractSegment(inputs.problem);
+  const solutionCore = extractSegment(inputs.solution);
+
   if (inputs.circleType === 'assumption') {
     return {
       assumptions: [
-        `[LOFA #1]: ${inputs.customer} experiences ${inputs.problem} frequently enough to seek a solution`,
-        `[LOFA #2]: ${inputs.customer} is willing to change their current behavior to adopt ${inputs.solution}`,
-        `[LOFA #3]: ${inputs.solution} effectively addresses ${inputs.problem} better than existing alternatives`
+        `[LOFA #1]: The target customer segment experiences this problem frequently enough to actively seek a solution`,
+        `[LOFA #2]: Customers are willing to change their current behavior or pay to adopt the proposed solution`,
+        `[LOFA #3]: The proposed solution effectively addresses the core problem better than existing alternatives`
       ]
     };
   } else {
@@ -224,7 +265,7 @@ function offlineBackup(inputs: Inputs): Output {
     }
     return {
       assumptions: lofas.map((lofa, i) => 
-        `Hypothesis ${i + 1}: We believe that ${inputs.customer} will actively seek and use ${inputs.solution} because they currently struggle with ${inputs.problem} on a regular basis.`
+        `Hypothesis ${i + 1}: We believe that the target customers will actively seek and adopt the solution because they face this problem regularly and current alternatives are insufficient.`
       )
     };
   }
@@ -238,6 +279,7 @@ function parseResponse(text: string): string[] {
 async function generateLeapOfFaith(inputs: Inputs): Promise<Output> {
   const { system, user } = buildPrompt(inputs);
   const providers: Array<() => Promise<string>> = [
+    () => callLovableAI(system, user),
     () => callGemini(system, user),
     () => callOpenAI(system, user),
     () => callTogether(system, user),
