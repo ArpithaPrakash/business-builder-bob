@@ -22,7 +22,7 @@ const VideoIntroPage = ({ businessIdea, onBack, onStartBuilding }: VideoIntroPag
         {/* Subtitle Section */}
         <div className="text-center mb-12">
           <p className="text-xl text-muted-foreground">
-            Please watch the following one-minute video to learn about the CPS hypothesis.
+            Please watch the following short video to learn about the CPS hypothesis.
           </p>
         </div>
 
@@ -50,7 +50,7 @@ const VideoIntroPage = ({ businessIdea, onBack, onStartBuilding }: VideoIntroPag
             size="lg"
             className="bg-blue-100 border-blue-300 text-blue-700 hover:bg-blue-200 px-8 py-4 text-lg font-medium rounded-xl"
           >
-            Back to the Image
+            Back to the Idea
           </Button>
           
           <Button
