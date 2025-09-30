@@ -2,16 +2,20 @@ import React, { useState, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Upload, Cloud, CheckCircle } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 interface ScreenshotUploadProps {
   onBack: () => void;
-  onContinue: () => void;
+  onContinue: (name: string) => void;
 }
 
 const ScreenshotUpload = ({ onBack, onContinue }: ScreenshotUploadProps) => {
   const [uploadedFile, setUploadedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
+  const [isExtracting, setIsExtracting] = useState(false);
+  const { toast } = useToast();
 
   const handleFileUpload = useCallback((file: File) => {
     if (file && (file.type === 'image/jpeg' || file.type === 'image/png')) {
@@ -47,6 +51,52 @@ const ScreenshotUpload = ({ onBack, onContinue }: ScreenshotUploadProps) => {
       handleFileUpload(files[0]);
     }
   }, [handleFileUpload]);
+
+  const handleContinue = async () => {
+    if (!uploadedFile) return;
+
+    setIsExtracting(true);
+    
+    try {
+      // Convert file to base64
+      const reader = new FileReader();
+      reader.readAsDataURL(uploadedFile);
+      
+      await new Promise((resolve) => {
+        reader.onloadend = resolve;
+      });
+      
+      const imageBase64 = reader.result as string;
+
+      // Call the edge function to extract name
+      const { data, error } = await supabase.functions.invoke('extract-linkedin-name', {
+        body: { imageBase64 }
+      });
+
+      if (error) {
+        console.error('Error extracting name:', error);
+        toast({
+          title: "Extraction failed",
+          description: "Using 'Friend' as fallback name",
+          variant: "destructive"
+        });
+        onContinue('Friend');
+      } else {
+        const extractedName = data?.name || 'Friend';
+        onContinue(extractedName);
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      toast({
+        title: "Error",
+        description: "Using 'Friend' as fallback name",
+        variant: "destructive"
+      });
+      onContinue('Friend');
+    } finally {
+      setIsExtracting(false);
+    }
+  };
 
   const handleUploadClick = () => {
     const input = document.createElement('input');
@@ -160,11 +210,12 @@ const ScreenshotUpload = ({ onBack, onContinue }: ScreenshotUploadProps) => {
         {uploadedFile && (
           <div className="text-center mb-8 animate-fade-in-up" style={{ animationDelay: '0.3s' }}>
             <Button
-              onClick={onContinue}
-              className="bg-construction-green hover:bg-construction-green/90 text-white px-12 py-6 text-lg font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+              onClick={handleContinue}
+              disabled={isExtracting}
+              className="bg-construction-green hover:bg-construction-green/90 text-white px-12 py-6 text-lg font-medium rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-105 disabled:opacity-50"
             >
               <Upload className="w-5 h-5 mr-2" />
-              Upload & Continue
+              {isExtracting ? 'Extracting name...' : 'Upload & Continue'}
             </Button>
           </div>
         )}

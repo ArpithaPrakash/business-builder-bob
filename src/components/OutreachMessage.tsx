@@ -5,28 +5,29 @@ import { ArrowLeft, Copy, CheckCircle, Sparkles } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 
 interface OutreachMessageProps {
+  linkedInName: string;
   onBack: () => void;
   onContinue: () => void;
 }
 
-const OutreachMessage = ({ onBack, onContinue }: OutreachMessageProps) => {
+const OutreachMessage = ({ linkedInName, onBack, onContinue }: OutreachMessageProps) => {
   const [copiedIndex, setCopiedIndex] = useState<number | null>(null);
   const { toast } = useToast();
 
-  const mainTemplate = `Hi [Name], I saw your post about [topic]. I'm currently working on [my idea], and I'd love to hear about your experience. Would you be open to a quick chat?`;
+  const mainTemplate = `Hi ${linkedInName}, I saw your post about [topic]. I'm currently working on [my idea], and I'd love to hear about your experience. Would you be open to a quick chat?`;
 
   const alternateTemplates = [
     {
       label: "Casual",
-      message: `Hey [Name]! Your post about [topic] really resonated with me. I'm building [my idea] and would love to pick your brain if you have a few minutes?`
+      message: `Hey ${linkedInName}! Your post about [topic] really resonated with me. I'm building [my idea] and would love to pick your brain if you have a few minutes?`
     },
     {
       label: "Direct",
-      message: `Hi [Name], I'm researching [topic] for [my idea]. Your expertise would be incredibly valuable. Could we schedule a brief 15-minute call?`
+      message: `Hi ${linkedInName}, I'm researching [topic] for [my idea]. Your expertise would be incredibly valuable. Could we schedule a brief 15-minute call?`
     },
     {
       label: "Research-heavy",
-      message: `Hello [Name], I'm conducting customer research for [my idea] and noticed your insightful post about [topic]. Would you be willing to share your perspective in a short interview?`
+      message: `Hello ${linkedInName}, I'm conducting customer research for [my idea] and noticed your insightful post about [topic]. Would you be willing to share your perspective in a short interview?`
     }
   ];
 
@@ -63,7 +64,7 @@ const OutreachMessage = ({ onBack, onContinue }: OutreachMessageProps) => {
           </span>
         );
       }
-      return part;
+      return <span key={index}>{part}</span>;
     });
   };
 
@@ -165,7 +166,7 @@ const OutreachMessage = ({ onBack, onContinue }: OutreachMessageProps) => {
         <div className="mb-8 animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
           <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 text-center">
             <p className="text-amber-700 font-medium">
-              💡 <strong>Tip:</strong> Update [Name], [topic], and [my idea] with specific details before you send.
+              💡 <strong>Tip:</strong> Update [topic] and [my idea] with specific details before you send.
             </p>
           </div>
         </div>

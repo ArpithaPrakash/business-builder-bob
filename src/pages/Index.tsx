@@ -18,6 +18,7 @@ const Index = () => {
   const [threePAnswers, setThreePAnswers] = useState<ThreePAnswers | null>(null);
   const [cpsData, setCpsData] = useState<any>(null);
   const [lofaData, setLofaData] = useState<string[]>([]);
+  const [linkedInName, setLinkedInName] = useState<string>('Friend');
 
   const handleIdeaSubmit = async (idea: string) => {
     setIsLoading(true);
@@ -107,7 +108,8 @@ const Index = () => {
     setCurrentStep('customer-discovery');
   };
 
-  const handleScreenshotUploadComplete = () => {
+  const handleScreenshotUploadComplete = (name: string) => {
+    setLinkedInName(name);
     setCurrentStep('outreach-message');
   };
 
@@ -209,6 +211,7 @@ const Index = () => {
       
       {currentStep === 'outreach-message' && (
         <OutreachMessage
+          linkedInName={linkedInName}
           onBack={handleBackToScreenshotUpload}
           onContinue={handleOutreachMessageComplete}
         />
