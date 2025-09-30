@@ -342,8 +342,8 @@ function parseJSON(text: string): Output {
 async function generateMomTest(inputs: Inputs): Promise<Output> {
   const prompt = buildPrompt(inputs);
   const providers = [
-    { name: 'Lovable AI', call: () => callLovableAI(prompt) },
     { name: 'Gemini', call: () => callGemini(prompt) },
+    { name: 'Lovable AI', call: () => callLovableAI(prompt) },
     { name: 'OpenAI', call: () => callOpenAI(prompt) },
     { name: 'Together', call: () => callTogether(prompt) },
     { name: 'Groq', call: () => callGroq(prompt) }

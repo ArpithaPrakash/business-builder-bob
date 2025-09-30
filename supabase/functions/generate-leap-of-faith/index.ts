@@ -279,8 +279,8 @@ function parseResponse(text: string): string[] {
 async function generateLeapOfFaith(inputs: Inputs): Promise<Output> {
   const { system, user } = buildPrompt(inputs);
   const providers: Array<() => Promise<string>> = [
-    () => callLovableAI(system, user),
     () => callGemini(system, user),
+    () => callLovableAI(system, user),
     () => callOpenAI(system, user),
     () => callTogether(system, user),
     () => callGroq(system, user)
